@@ -4,8 +4,8 @@ close all force;
 addpath("./algos");
 % -------------------
 Na = 8;
-Nb = 10000*Na;
-a=-5; b=5;
+Nb = 10*Na;
+a=0; b=1;
 x1 = (a:(b-a)/(Na-1):b)'
 x0 = (a:(b-a)/(Nb-1):b)';
 N0 = length(x0);
@@ -22,10 +22,17 @@ f1 = f(x1);
 
 figure(1);
 clf;
-plot(x0, f0);
+subplot(1,2,1);
 hold on;
-plot(x0, f2, 'x');
-%plot(x1, 0.5, 'ro');
-plot(x0, f7, 'g');
-grid on;
-grid minor;
+plot(x0, f0, 'b');
+plot(x1, f1, 'g');
+plot(x0, f2, 'r');
+plot(x0, f3, 'm');
+plot(x0, f4, 'y');
+subplot(1,2,2);
+hold on;
+plot(x0, f0, 'b');
+plot(x1, f1, 'g');
+plot(x0, f5, 'r');
+plot(x0, f6, 'm');
+plot(x0, f7, 'y');
