@@ -9,8 +9,8 @@ function [y, x0] = my_forward_newton_polynomial(f1, x1, x0)
        end
     end
     
-    q = (x0(i)-x1(1)) / (x1(2)-x1(1));
     for i=(1:1:length(y))
+       q = (x0(i)-x1(1)) / (x1(2)-x1(1));
        Q=1;
        p = f1(1);
        fct=1;
