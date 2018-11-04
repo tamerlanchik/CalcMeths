@@ -10,8 +10,8 @@ function [y, x0] = my_backward_newton_polynomial(f1, x1, x0)
     end
     
     h=x1(n)-x1(n-1);
-    q=(x0(i)-x1(n))/h;
     for i=(1:1:length(y))
+       q=(x0(i)-x1(n))/h;
        Q=1;
        fct=1;
        p = f1(n);
