@@ -10,7 +10,7 @@ function int = hw_int_analog(a,b,n,f,name)
             int = trapezoidal(a,b,n,f);
         case 'simpson'
             int = simpson(a,b,n,f);
-        case 'gaussian with 5 points'
+        case 'gaussian_with_5_points'
             int = gaussian_5_points(a,b,n,f);
         otherwise
             int=-1;
