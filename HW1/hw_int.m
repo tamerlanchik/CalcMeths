@@ -2,6 +2,13 @@ clc;
 clear variables;
 close all force;
 addpath("./algos");
+if ~exist("./data")
+    mkdir("./data");
+end
+if exist("./data/hw_int_cmd1.txt")
+    delete('./data/hw_int_cmd1.txt');
+end
+diary ./data/hw_int_cmd1.txt;
 % -------------------
 
 a = 0.2;
@@ -41,6 +48,7 @@ end
 disp(array2table(S, 'VariableNames', names));
 fprintf('N = %d\n', n(length(n)));
 
+diary off;
 %-----------------------------------
 
 clf;
