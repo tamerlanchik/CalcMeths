@@ -54,7 +54,7 @@ plot(t, s1);
 grid on;
 grid minor;
 xlabel('X');
-ylabel('Y\omega');
+ylabel('Y');
 hold on;
 
 subplot(2,2,3);
