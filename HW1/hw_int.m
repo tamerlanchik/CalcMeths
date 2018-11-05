@@ -7,9 +7,7 @@ addpath("./algos");
 a = 0.2;
 b = 0.7;
 eps = 10^(-6);
-n = [10,100,1000];
 names = {'riemann_left', 'riemann_mid', 'riemann_right', 'trapezoidal', 'simpson', 'gaussian with 5 points'};
-S = zeros(length(n), length(names));
 
 N=10;
 d2n=ones(1, length(names));
@@ -30,9 +28,11 @@ while nnz(d2n>eps)~=0
    N=N*2;
 end
 n=[10,100,1000,N];
-for i=(1:1:3)
-   for j=(1:1:6)
+S = zeros(length(n), length(names));
+for i=(1:1:length(n))
+   for j=(1:1:length(names))
        ans = hw_int_analog(a,b,n(i), @hw_int_func, names{j});
        S(i,j) = ans;
    end
 end
+S=S
