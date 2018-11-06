@@ -1,0 +1,9 @@
+    <strong>riemann_left</strong>    <strong>riemann_mid</strong>    <strong>riemann_right</strong>    <strong>trapezoidal</strong>    <strong>simpson</strong>    <strong>gaussian_with_5_points</strong>
+    <strong>____________</strong>    <strong>___________</strong>    <strong>_____________</strong>    <strong>___________</strong>    <strong>_______</strong>    <strong>______________________</strong>
+
+      0.21462         0.21835         0.22095         0.21779      0.21816           0.21816        
+      0.21784         0.21816         0.21847         0.21816      0.21816           0.21816        
+      0.21813         0.21816         0.21819         0.21816      0.21816           0.21816        
+      0.21816         0.21816         0.21816         0.21816      0.21816           0.21816        
+
+N = 20480
