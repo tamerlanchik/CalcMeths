@@ -1,0 +1,260 @@
+#Direct SLAU
+function [x, ok] = my_gaussan(sA, sb)
+    [n,m] = size(sA);
+    x = zeros(n,1);
+    if (n ~= m)
+        ok=false;
+    else
+        t=0;
+        for i=(sprank(sA)+1:1:n)
+            t = t+sb(i);
+        end;
+        if(t~=0)
+            ok = false;
+            x = 0;
+        else
+            A = sA; b = sb;
+            %%Steps forward
+            for i=(1:1:n)
+                for k=(i+1:1:m)
+                   b(k) = b(k) - b(i)*A(k,i)/A(i,i);
+                   A(k,:) = A(k,:)-A(i,:)*A(k,i)/A(i,i);
+                end
+            end
+
+            %Stepd backwards
+            for i=(n:-1:1)
+                temp=0;
+                for k=(i+1:1:n)
+                    temp = temp + A(i,k)*x(k);
+                end
+               x(i) = (b(i)-temp)/A(i,i);
+            end 
+            ok = true;
+        end
+    end
+end
+
+function [x,ok] = my_gaussan_jordano(sA,sb)
+    [n,m] = size(sA);
+    x = zeros(n,1);
+    if (n ~= m)
+        ok=false;
+    else
+        C = [sA sb];
+        %Forward
+        for i=(1:1:n)
+           for k=(i+1:1:n)
+               C(k,:) = C(k,:) - C(i,:)*C(k,i)/C(i,i);
+           end
+        end
+        
+        %Backward
+        for i=(n:-1:1)
+           for k=(i-1:-1:1)
+               C(k,:) = C(k,:) - C(i,:)*C(k,i)/C(i,i);
+           end
+           C(i,:)=C(i,:)./C(i,i);
+        end
+        x = C(:,n+1);
+        ok=true;
+        
+    end
+end
+
+function [x,ok] = my_holets(A,b)
+    [n,m] = size(A);
+    x = zeros(n,1);
+    if ~(all(eigs(A)>0))
+        ok=false;
+    else
+        L=my_chol(A);
+
+        n = size(A,1);
+        y=zeros(n,1);
+        for i = (1:1:n)
+                temp=0;
+                    for k=(1:1:i)
+                        temp = temp + L(i,k)*y(k);
+                    end
+                y(i) = (b(i)-temp)/L(i,i);
+        end
+
+        A=L';
+        for i = (n:-1:1)
+            temp=0;
+            for k=(i+1:1:n)
+                temp = temp + A(i,k)*x(k);
+            end
+            x(i) = (y(i)-temp)/A(i,i);
+        end 
+
+      ok = true;
+    end
+end
+
+
+function l = my_chol(x)
+
+        l = zeros(size(x));
+
+        for i=1:1:size(x,1)
+            for j = 1:1:(i-1)
+                temp = 0;
+                for k=1:1:(j-1)
+                   temp = temp + l(i,k)*l(j,k); 
+                end
+                l(i,j) = (x(i,j)-temp)/l(j,j);
+            end
+            temp = 0;
+            for k=1:1:(i-1)
+               temp = temp + l(i,k)^2; 
+            end
+            l(i,i) = sqrt(x(i,i)-temp);
+        end
+end
+
+function [x,ok] = my_kramer(A,b)
+    [n,m] = size(A);
+    d=det(A);
+    x = zeros(n,1);
+    if (n ~= m || d==0)
+        ok=false;
+    else
+        for i=(1:1:n)
+            T = A;
+            T(:,i)=b;
+            x(i) = det(T)/d;
+        end
+        ok=true;
+    end
+end
+
+function [x,ok] = my_method_inverse_matrix(A,b)
+    [n,m] = size(A);
+    d=det(A);
+    x = zeros(n,1);
+    if (abs(d)==0)
+        ok=false;
+    else 
+        C=zeros(n,m);
+        for i=(1:1:n)
+            for j=(1:1:m)
+                Q=A;
+                Q(:,j) = [];
+                Q(i,:) = [];
+                C(i,j) = ((-1)^(i+j)) * det(Q);
+            end
+        end
+        invA = C/d;
+        x = invA*b;
+        ok=true;
+    end                
+end
+
+#Iterative Slau
+
+function [x, ok, k] = my_gauss_seidel(A, b, x, e, Kmax)
+    n = size(A,1);
+    D=diag(diag(A));
+    L=tril(A,-1);
+    U=triu(A,1);
+    P=-(L+D)^(-1)*U;
+    if normest(P)>=1
+        ok=false;
+        x=zeros(n,1);
+        k=0;
+    else
+        k=1;
+        c=zeros(n);
+        d=zeros(n, 1);
+        for i=(1:1:n)
+            for j=(1:1:n)
+                if i~=j
+                    c(i,j)=-A(i,j)/A(i,i); 
+                end
+            end
+            d(i) = b(i)/A(i,i);
+        end
+        
+        while (k<Kmax)&&(normest(A*x-b) > e)
+           for i=(1:1:n)
+              temp=0;
+              for j=(1:1:n)
+                 temp=temp+c(i,j)*x(j); 
+              end
+              x(i) = temp + d(i);
+           end
+           k=k+1;
+        end
+        ok=true;
+    end
+    
+end
+
+function [x, ok, k] = my_jacobi(A, b, x0, e, Kmax)
+    n = size(A,1);
+    D=diag(diag(A));
+    L=tril(A,-1);
+    U=triu(A,1);
+    B=-(D^(-1)*(L+U));
+    l=abs(eigs(B));
+    
+    if sum(l>=1)~=0
+        ok=false;
+        x=zeros(n,1);
+        k=0;
+    else
+        x1(:,1)=x0(:,1);
+        k=1;
+        q=normest(B);
+        x0=ones(n,1);
+        while (k<Kmax)&&(e < max(abs(x1-x0))/(1-q))
+            x0(:,1)=x1(:,1);
+            for i=1:1:n
+                temp=0;
+                for j=1:1:n
+                    if i~=j
+                        temp=temp+A(i,j)*x0(j);
+                    end
+                end
+                x1(i)=(b(i)-temp)/A(i,i);
+            end
+            k = k + 1;
+        end
+        x(:,1)=x1(:,1);
+        ok = true;
+    end
+end
+
+function [x, ok, k] = my_relaxation(A, b, x, e, Kmax)
+    n = size(A,1);
+    D=diag(diag(A));
+    L=tril(A,-1);
+    U=triu(A,1);
+    P=-(L+D)^(-1)*U;
+    %x(:,1)=x0(:,1);
+    T=eye(n)-D^(-1)*A;
+    p = max(abs(eigs(T)));
+    w = 1 - (p / (1 + (1-p^2)^0.5))^2;
+    if (w<=0 || w>=2)||(normest(P)>=1)
+        ok=false;
+        k=0;
+    else
+        k=1;
+        while (k<Kmax)&& (normest(A*x-b)>e)
+            for i=(1:1:n)
+                 temp1=0; temp2=0;
+                  for j=(1:1:(i-1))
+                    temp1 = temp1 +  A(i,j)*x(j);
+                  end
+                  for j=(i+1:1:n)
+                     temp2 = temp2 + A(i,j)*x(j); 
+                  end
+                 x(i)=(1-w)*x(i) + (w/A(i,i)) * (b(i) - temp1 - temp2);
+            end
+            k = k + 1;
+        end
+        ok=true;
+    end    
+end
