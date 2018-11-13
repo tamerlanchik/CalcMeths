@@ -9,13 +9,14 @@ if exist("./data/hw_int_cmd.txt")
     delete('./data/hw_int_cmd.txt');
 end
 diary ./data/hw_int_cmd.txt;
-% -------------------
+% -------Нач знач------------
 
 a = 0.2;
 b = 0.7;
 eps = 10^(-6);
 names = {'riemann_left', 'riemann_mid', 'riemann_right', 'trapezoidal', 'simpson', 'gaussian_with_5_points'};
 
+%--------Подбор N---------------
 N=10;
 d2n=ones(1, length(names));
 D2n=[];
@@ -25,6 +26,7 @@ for j=1:1:6
    In(j)= hw_int_analog(a,b,N, @hw_int_func, names{j});
 end
 teta=[1/3, 1/3, 1/3, 1/3, 1/15, 1];
+
 while nnz(d2n>eps)~=0
    N=N*2;
    for j=(1:1:6)
@@ -37,6 +39,8 @@ end
 N=N/2;
 D2n(size(D2n,1),:) = [];
 
+%-------------Генерация S-----------------------------
+
 n=[10,100,1000,N];
 S = zeros(length(n), length(names));
 for i=(1:1:length(n))
@@ -44,12 +48,16 @@ for i=(1:1:length(n))
        S(i,j) = hw_int_analog(a,b,n(i), @hw_int_func, names{j});
    end
 end
+
+
 %-----------------------------------
+%Перевод Ns в строки
 Ns=cell(1,length(n));
 for i=(1:1:length(n))
     Ns{i} = num2str(n(i));
 end
 
+%Картнки
 clf;
 figure(1);
 set(gcf, 'Position', [50, 200, 1500, 600]);
@@ -99,7 +107,9 @@ grid minor;
 title("Delta 2n for all methods");
 legend(strrep(names, '_', ' '));
 
+%--------------------------------------------
 
+%Расширение S, печать таблицы
 S=[n', S];
 names=['N', names];
 disp(array2table(S, 'VariableNames', names));
