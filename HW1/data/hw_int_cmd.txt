@@ -1,0 +1,8 @@
+      <strong>N</strong>      <strong>riemann_left</strong>    <strong>riemann_mid</strong>    <strong>riemann_right</strong>    <strong>trapezoidal</strong>    <strong>simpson</strong>    <strong>gaussian_with_5_points</strong>
+    <strong>_____</strong>    <strong>____________</strong>    <strong>___________</strong>    <strong>_____________</strong>    <strong>___________</strong>    <strong>_______</strong>    <strong>______________________</strong>
+
+       10      0.15694         0.16171         0.16592         0.16143      0.16162           0.16162        
+      100      0.16117         0.16162         0.16206         0.16161      0.16162           0.16162        
+     1000      0.16157         0.16162         0.16166         0.16162      0.16162           0.16162        
+    10240      0.16161         0.16162         0.16162         0.16162      0.16162           0.16162        
+
