@@ -1,3 +1,12 @@
+{Output argument "int" (and maybe others) not assigned
+during call to "hw_int_analog".
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('hw_int', 'B:\Andrey\Documents\BMSTU\ÌÂ\CalcMeths\HW1\hw_int.m', 25)" style="font-weight:bold">hw_int</a> (<a href="matlab: opentoline('B:\Andrey\Documents\BMSTU\ÌÂ\CalcMeths\HW1\hw_int.m',25,0)">line 25</a>)
+   In(j)= hw_int_analog(a,b,N, @hw_int_func, names{j});
+} 
+hw_int
+[Warning: File not found or permission denied] 
+[> In <a href="matlab:matlab.internal.language.introspective.errorDocCallback('hw_int', 'B:\Andrey\Documents\BMSTU\ÌÂ\CalcMeths\HW1\hw_int.m', 9)" style="font-weight:bold">hw_int</a> (<a href="matlab: opentoline('B:\Andrey\Documents\BMSTU\ÌÂ\CalcMeths\HW1\hw_int.m',9,0)">line 9</a>)] 
       <strong>N</strong>      <strong>riemann_left</strong>    <strong>riemann_mid</strong>    <strong>riemann_right</strong>    <strong>trapezoidal</strong>    <strong>simpson</strong>    <strong>gaussian_with_5_points</strong>
     <strong>_____</strong>    <strong>____________</strong>    <strong>___________</strong>    <strong>_____________</strong>    <strong>___________</strong>    <strong>_______</strong>    <strong>______________________</strong>
 

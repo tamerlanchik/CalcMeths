@@ -1,4 +1,4 @@
-function ans = hw_int_analog(a,b,N,f,name)
+function int = hw_int_analog(a,b,N,f,name)
     ans = 0;
 %     X = (a:(b-a)/n:b);
     v=1;
@@ -9,28 +9,28 @@ function ans = hw_int_analog(a,b,N,f,name)
                ans = ans + f(X(i+v))*(X(i+1+v)-X(i+v));
             end
         case 'riemann_mid'
-            X = (a:(b-a)/N:b);
-            for i=(1:1:N)
+            X = (a:(b-a)/n:b);
+            for i=(1:1:n)
                ans = ans + f((X(i-1+v)+X(i+v))/2)*(X(i+v)-X(i-1+v));
             end
         case 'riemann_right'
-            X = (a:(b-a)/N:b);
-            for i=(1:1:N)
+            X = (a:(b-a)/n:b);
+            for i=(1:1:n)
                ans = ans + f(X(i+v))*(X(i+v)-X(i-1+v)); 
             end
         case 'trapezoidal'
-            X = (a:(b-a)/N:b);
-            for i=(0:1:N-1)
+            X = (a:(b-a)/n:b);
+            for i=(0:1:n-1)
                 ans = ans + (f(X(i+v)) + f(X(i+1+v)))*(X(i+1+v)-X(i+v))/2;
             end
         case 'simpson'
-            h = (b-a)/(2*N);
+            h = (b-a)/(2*n);
             ans = f(a) + f(b);
-            X = (a:(b-a)/(2*N):b);
-            for i=(1:1:N-1)
+            X = (a:(b-a)/(2*n):b);
+            for i=(1:1:n-1)
                ans = ans + 2*f(X(2*i+v));
             end
-            for i=(1:1:N)
+            for i=(1:1:n)
                ans = ans + 4*f(X(2*i-1+v));
             end
             ans = ans * h / 3;
