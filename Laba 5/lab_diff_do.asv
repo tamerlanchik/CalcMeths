@@ -14,11 +14,14 @@ function [t,df] = lab_diff_do(a,b,n,name,k,f)
                     end
                 case 4
                     for i=1:1:n-3
-                        df(i) = (1/12) * (-f(t(i+2))+8*f(t(i+1))-8*f(t(i+3))+f(t(i)))/(t(i+1)-t(i));
+                        df(i) = (1/12) * (-f(t(i+3))+8*f(t(i+2))-8*f(t(i+4))+f(t(i)))/(t(i+1)-t(i));
                     end
                 case 6
-                    for i=1:1:n-2
-                        df(i) = 0.5*(f(t(i+2))-f(t(i)))/(t(i+2)-t(i));
+                    for i=1:1:n-5
+                       df(i)=(1/60) * (-f(t(i-3))+f(t(i+3)));
+                       df(i) = df(i) + (3/20) * (f(t(i-2))-f(t(i+2)));
+                       df(i) = df(i) + (3/4) * (-f(t(i-1))+f(t(i+1)));
+                       df(i) = df(i)/(t(i+1)-t(i));
                     end
                 otherwise
             end
@@ -34,13 +37,7 @@ function [t,df] = lab_diff_do(a,b,n,name,k,f)
                         df(i) = 0.5*(f(t(i))-f(t(i-2)))/(t(i)-t(i-2))
                     end
                 case 4
-                    for i=1:1:n-2
-                        df(i) = 0.5*(f(t(i+2))-f(t(i)))/(t(i+2)-t(i));
-                    end
                 case 6
-                    for i=1:1:n-2
-                        df(i) = 0.5*(f(t(i+2))-f(t(i)))/(t(i+2)-t(i));
-                    end
                 otherwise
             end
         case 'central'
