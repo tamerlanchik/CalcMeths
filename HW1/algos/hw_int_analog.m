@@ -4,29 +4,29 @@ function ans = hw_int_analog(a,b,N,f,name)
     v=1;
     switch name
         case 'riemann_left'
-            X = (a:(b-a)/N:b);
+            X = (a:(b-a)/N:b)';
             for i=(0:1:N-1)
                ans = ans + f(X(i+v))*(X(i+1+v)-X(i+v));
             end
         case 'riemann_mid'
-            X = (a:(b-a)/N:b);
+            X = (a:(b-a)/N:b)';
             for i=(1:1:N)
                ans = ans + f((X(i-1+v)+X(i+v))/2)*(X(i+v)-X(i-1+v));
             end
         case 'riemann_right'
-            X = (a:(b-a)/N:b);
+            X = (a:(b-a)/N:b)';
             for i=(1:1:N)
                ans = ans + f(X(i+v))*(X(i+v)-X(i-1+v)); 
             end
         case 'trapezoidal'
-            X = (a:(b-a)/N:b);
+            X = (a:(b-a)/N:b)';
             for i=(0:1:N-1)
                 ans = ans + (f(X(i+v)) + f(X(i+1+v)))*(X(i+1+v)-X(i+v))/2;
             end
         case 'simpson'
             h = (b-a)/(2*N);
             ans = f(a) + f(b);
-            X = (a:(b-a)/(2*N):b);
+            X = (a:(b-a)/(2*N):b)';
             for i=(1:1:N-1)
                ans = ans + 2*f(X(2*i+v));
             end
@@ -39,7 +39,7 @@ function ans = hw_int_analog(a,b,N,f,name)
             x=[-0.90618, -0.538469, 0, 0.538469, 0.90618];
             w=[0.236927, 0.478629, 0.568889, 0.478629, 0.236927];
             n=length(x);
-            X = (a:(b-a)/N:b);
+            X = (a:(b-a)/N:b)';
             for k=(0:1:N-1)
                temp=0;
                for j=(1:1:n)
