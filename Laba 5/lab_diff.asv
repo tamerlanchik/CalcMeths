@@ -2,6 +2,13 @@ clc;
 clear variables;
 close all force;
 
+% w = [1,2,3,4,5];
+% t=(1:1:10)
+% d = f(t(1:5)).*w
+% 
+% function y = f(x)
+%     y=x^2;
+% end
 
 a = 0.2;
 b = 0.7;
@@ -14,16 +21,17 @@ scalFuncDer = cell(length(accDeg)*length(names), 2);
 temp=1;
 clf;
 %в каждой строке пара векторов - df и t(сетка разбиений)
-for i=1:1:length(accDeg)
-    for j=1:1:length(names)
-        [scalFuncDer{temp,:}] = lab_diff_do(a,b,n,names{j}, accDeg(i), @lab_diff_f);
-        temp = temp + 1;
-%         figure(temp-1);
-%         plot(scalFuncDer{temp-1,:});
-%         title(num2str(i)+" " + num2str(j));
-    end
-end
-celldisp(scalFuncDer);
+% for i=1:1:length(accDeg)
+%     for j=1:1:length(names)
+%         [scalFuncDer{temp,:}] = lab_diff_do(a,b,n,names{j}, accDeg(i), @lab_diff_f);
+%         temp = temp + 1;
+% %         figure(temp-1);
+% %         plot(scalFuncDer{temp-1,:});
+% %         title(num2str(i)+" " + num2str(j));
+%     end
+% end
+% celldisp(scalFuncDer);
+[y,u] = lab_diff_do(a,b,n,names{j}, 4, @lab_diff_f)
 
 %---------3------------
 
@@ -34,18 +42,18 @@ derivs={@(x) F1(x), @(x) F2(x)};
 for i=1:1:length(names)
     J{i} = jacobi(x0, h, @doubleArgFunc, names{i});
 end
-celldisp(J);
+%celldisp(J);
 
 rJ = zeros(1,2);            %exact Jacobi
 rJ(1,1) = derivs{1}(x0);
 rJ(1,2) = derivs{2}(x0);
-disp(rJ);
+%disp(rJ);
 
-dJ=cell(1, length(names));
+dJ=zeros(1, length(names));  %delta
 for i=1:1:length(names)
-    dJ{1, i} = abs(rJ-J{i})./rJ;
+    dJ(i) = sum((abs(rJ-J{i})./rJ).^2);
 end
-celldisp(dJ);
+disp(dJ)
 
 
 function f = doubleArgFunc(x)
