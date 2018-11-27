@@ -1,0 +1,350 @@
+#Direct SLAU
+function [x, ok] = my_gaussan(sA, sb)
+    [n,m] = size(sA);
+    x = zeros(n,1);
+    if (n ~= m)
+        ok=false;
+    else
+        t=0;
+        for i=(sprank(sA)+1:1:n)
+            t = t+sb(i);
+        if(t~=0)
+            ok = false;
+            x = 0;
+        else
+            A = sA; b = sb;
+            %%Steps forward
+            for i=(1:1:n)
+                for k=(i+1:1:m)
+                   b(k) = b(k) - b(i)*A(k,i)/A(i,i);
+                   A(k,:) = A(k,:)-A(i,:)*A(k,i)/A(i,i);
+            %Stepd backwards
+            for i=(n:-1:1)
+                temp=0;
+                for k=(i+1:1:n)
+                    temp = temp + A(i,k)*x(k);
+               x(i) = (b(i)-temp)/A(i,i);
+            ok = true;
+
+function [x,ok] = my_gaussan_jordano(sA,sb)
+    [n,m] = size(sA);
+    x = zeros(n,1);
+    if (n ~= m)
+        ok=false;
+    else
+        C = [sA sb];
+        %Forward
+        for i=(1:1:n)
+           for k=(i+1:1:n)
+               C(k,:) = C(k,:) - C(i,:)*C(k,i)/C(i,i);
+        
+        %Backward
+        for i=(n:-1:1)
+           for k=(i-1:-1:1)
+               C(k,:) = C(k,:) - C(i,:)*C(k,i)/C(i,i);
+           C(i,:)=C(i,:)./C(i,i);
+        x = C(:,n+1);
+        ok=true;
+
+function [x,ok] = my_holets(A,b)
+    [n,m] = size(A);
+    x = zeros(n,1);
+    if ~(all(eigs(A)>0))
+        ok=false;
+    else
+        L=my_chol(A);
+        n = size(A,1);
+        y=zeros(n,1);
+        for i = (1:1:n)
+                temp=0;
+                    for k=(1:1:i)
+                        temp = temp + L(i,k)*y(k);
+                y(i) = (b(i)-temp)/L(i,i);
+        A=L';
+        for i = (n:-1:1)
+            temp=0;
+            for k=(i+1:1:n)
+                temp = temp + A(i,k)*x(k);
+            x(i) = (y(i)-temp)/A(i,i);
+      ok = true;
+
+
+function l = my_chol(x)
+
+        l = zeros(size(x));
+
+        for i=1:1:size(x,1)
+            for j = 1:1:(i-1)
+                temp = 0;
+                for k=1:1:(j-1)
+                   temp = temp + l(i,k)*l(j,k); 
+                l(i,j) = (x(i,j)-temp)/l(j,j);
+            temp = 0;
+            for k=1:1:(i-1)
+               temp = temp + l(i,k)^2; 
+            l(i,i) = sqrt(x(i,i)-temp);
+
+function [x,ok] = my_kramer(A,b)
+    [n,m] = size(A);
+    d=det(A);
+    x = zeros(n,1);
+    if (n ~= m || d==0)
+        ok=false;
+    else
+        for i=(1:1:n)
+            T = A;
+            T(:,i)=b;
+            x(i) = det(T)/d;
+        ok=true;
+
+function [x,ok] = my_method_inverse_matrix(A,b)
+    [n,m] = size(A);
+    d=det(A);
+    x = zeros(n,1);
+    if (abs(d)==0)
+        ok=false;
+    else 
+        C=zeros(n,m);
+        for i=(1:1:n)
+            for j=(1:1:m)
+                Q=A;
+                Q(:,j) = [];
+                Q(i,:) = [];
+                C(i,j) = ((-1)^(i+j)) * det(Q);
+        invA = C/d;
+        x = invA*b;
+        ok=true;
+
+#Iterative Slau
+
+function [x, ok, k] = my_gauss_seidel(A, b, x, e, Kmax)
+    n = size(A,1);
+    D=diag(diag(A));
+    L=tril(A,-1);
+    U=triu(A,1);
+    P=-(L+D)^(-1)*U;
+    if normest(P)>=1
+        ok=false;
+        x=zeros(n,1);
+        k=0;
+    else
+        k=1;
+        c=zeros(n);
+        d=zeros(n, 1);
+        for i=(1:1:n)
+            for j=(1:1:n)
+                if i~=j
+                    c(i,j)=-A(i,j)/A(i,i); 
+            d(i) = b(i)/A(i,i);
+        
+        while (k<Kmax)&&(normest(A*x-b) > e)
+           for i=(1:1:n)
+              temp=0;
+              for j=(1:1:n)
+                 temp=temp+c(i,j)*x(j); 
+              x(i) = temp + d(i);
+           k=k+1;
+        ok=true;
+
+function [x, ok, k] = my_jacobi(A, b, x0, e, Kmax)
+    n = size(A,1);
+    D=diag(diag(A));
+    L=tril(A,-1);
+    U=triu(A,1);
+    B=-(D^(-1)*(L+U));
+    l=abs(eigs(B));
+    
+    if sum(l>=1)~=0
+        ok=false;
+        x=zeros(n,1);
+        k=0;
+    else
+        x1(:,1)=x0(:,1);
+        k=1;
+        q=normest(B);
+        x0=ones(n,1);
+        while (k<Kmax)&&(e < max(abs(x1-x0))/(1-q))
+            x0(:,1)=x1(:,1);
+            for i=1:1:n
+                temp=0;
+                for j=1:1:n
+                    if i~=j
+                        temp=temp+A(i,j)*x0(j);
+                x1(i)=(b(i)-temp)/A(i,i);
+            k = k + 1;
+        x(:,1)=x1(:,1);
+        ok = true;
+function [x, ok, k] = my_relaxation(A, b, x, e, Kmax)
+    n = size(A,1);
+    D=diag(diag(A));
+    L=tril(A,-1);
+    U=triu(A,1);
+    P=-(L+D)^(-1)*U;
+    %x(:,1)=x0(:,1);
+    T=eye(n)-D^(-1)*A;
+    p = max(abs(eigs(T)));
+    w = 1 - (p / (1 + (1-p^2)^0.5))^2;
+    if (w<=0 || w>=2)||(normest(P)>=1)
+        ok=false;
+        k=0;
+    else
+        k=1;
+        while (k<Kmax)&& (normest(A*x-b)>e)
+            for i=(1:1:n)
+                 temp1=0; temp2=0;
+                  for j=(1:1:(i-1))
+                    temp1 = temp1 +  A(i,j)*x(j);
+                  for j=(i+1:1:n)
+                     temp2 = temp2 + A(i,j)*x(j); 
+                 x(i)=(1-w)*x(i) + (w/A(i,i)) * (b(i) - temp1 - temp2);
+            k = k + 1;
+        ok=true;
+
+#Interpolate
+
+function [y, x0] = my_backward_newton_polynomial(f1, x1, x0)
+    y=zeros(length(x0), 1);
+    d=zeros(length(x1));
+    d(:,1) = f1(:);
+    n=length(x1);
+    for i=(2:1:n)
+       for j=(i:1:length(x1))
+          d(j,i) = d(j, i-1)-d(j-1, i-1);
+    
+    h=x1(n)-x1(n-1);
+    for i=(1:1:length(y))
+       q=(x0(i)-x1(n))/h;
+       Q=1;
+       fct=1;
+       p = f1(n);
+       for k=(1:1:n-1)
+           fct = fct*k;
+           Q = Q * (q+k-1);
+           p = p + Q*d(n, k+1)/fct;
+       y(i)=p;
+
+function [y, x0] = my_cubic_spline(f1, x1, x0)
+    n=length(x1);
+    y=zeros(length(x0), 1);
+    C=zeros(n+1);
+    K=zeros(n);
+    L=zeros(n);
+    for k=(3:1:n)
+       Hk = x1(k)-x1(k-1);
+       Hkk = x1(k-1)-x1(k-2);
+       Fk = 3 * ((f1(k)-f1(k-1))/Hk - (f1(k-1)-f1(k-2))/Hkk);
+       Vk=2*(Hk+Hkk);
+       K(k) = (Fk-Hkk*K(k-1)) / (Vk-Hkk*L(k-1));
+       L(k) = Hk / (Vk-Hkk*L(k-1));
+    
+    for k=(n:-1:2)
+       C(k) = K(k) - L(k)*C(k+1);
+    
+    k=2;
+    for i=(1:1:length(y))
+        if x0(i) > x1(k)
+            k = k+1;
+        Hk = x1(k)-x1(k-1);
+        Dk = (C(k+1)-C(k))/(3*Hk);
+        Bk = (f1(k)-f1(k-1))/Hk - C(k)*Hk - Dk*Hk^2;
+        Ak = f1(k-1);
+        Hk = x0(i) - x1(k-1);
+        y(i) = Ak + Bk*Hk + C(k)*Hk^2 + Dk*Hk^3;
+
+function [y, x0] = my_forward_newton_polynomial(f1, x1, x0)
+    y=zeros(length(x0), 1);
+    d=zeros(length(x1));
+    n=length(x1);
+    d(:,1) = f1(:);
+    for i=(2:1:n)
+       for j=(1:1:length(x1)-i+1)
+          d(j,i) = d(j+1, i-1)-d(j, i-1);
+    
+    for i=(1:1:length(y))
+       q = (x0(i)-x1(1)) / (x1(2)-x1(1));
+       Q=1;
+       p = f1(1);
+       fct=1;
+       for k=(1:1:n-1)
+           fct = fct*k;
+           Q = Q * (q-k+1);
+           p = p + Q*d(1, k+1)/fct;
+       y(i)=p;
+
+function [y, x0] = my_lagrange_polynomial_meth(f1, x1, x0)
+    y=zeros(length(x0), 1);
+    for i=(1:1:length(y))
+        L=0;
+        for k=(1:1:length(x1))
+            temp=1;
+            for j=(1:1:length(x1))
+               if j~=k
+                    temp = temp*(x0(i)-x1(j))/(x1(k)-x1(j));
+            L = L + f1(k)*temp;
+        y(i)=L;
+
+function [y, x0] = my_linear_interpolation(f1, x1, x0)
+    y=zeros(length(x0), 1);
+    k=1;
+    for i=(1:1:length(x0)-1)
+       if x0(i) >= x1(k+1)
+           k = k + 1;
+       y(i) = f1(k) + ( f1(k+1)-f1(k))/(x1(k+1)-x1(k) ) * (x0(i)-x1(k));
+    y(length(y)) = f1(k+1);
+
+function [y, x0] = my_nearest_neighbour(y1, x1, x0)
+    y=zeros(length(x0), 1);
+    k=1;
+    kMax=length(x1);
+    for i=(1:1:length(x0))
+        if  k~=kMax && (abs(x0(i)-x1(k)) >= abs(x0(i)-x1(k+1)))
+            k = k + 1;
+        y(i) = y1(k);
+
+#Intergate
+function ans = gaussian_5_points(a,b,N,f)
+    ans = 0;
+    x=[-0.90618, -0.538469, 0, 0.538469, 0.90618];
+    w=[0.236927, 0.478629, 0.568889, 0.478629, 0.236927];
+    n=5;
+    h = (b-a)/(N);
+    for k=(1:1:N)
+       temp=0;
+       Xk = a+(k-1)*h;
+       Xkk = a+k*h;
+       for j=(1:1:n)
+          temp = temp + w(j)*f( (Xkk-Xk)*x(j)/2 + (Xk+Xkk)/2 );
+       ans = ans + (Xkk-Xk)*temp/2;
+
+
+function ans = riemann_sum(a,b,n,f,type)
+    ans = 0;
+    h = (b-a)/(n);
+    switch type
+        case -1
+            for i=(1:1:n)
+               ans = ans + f(a+(i-1)*h)*h;
+        case 0
+            for i=(2:1:n+1)
+               ans = ans + f(a + (h*(2*i-3))/2)*h;
+        case 1
+            for i=(2:1:n+1)
+               ans = ans + f(a+(i-1)*h)*h; 
+
+
+function ans = simpson(a,b,n,f,type)
+    h = (b-a)/(n);
+    ans = f(a) + f(b);
+    for i=(1:1:n-1)
+       ans = ans + 2*f(a+(i)*h);
+       p=a+(i)*h;
+    for i=(1:1:n)
+       ans = ans + 4*f(a+(2*i-1)*h/2);
+       p=a+(2*i-1)*h/2;
+    ans = ans * h / 6;
+
+function ans = trapezoidal(a,b,n,f)
+    ans = 0;
+    h = (b-a)/(n);
+    for i=(1:1:n)
+       ans = ans + (f(a+(i-1)*h) + f(a+(i)*h))*h/2;

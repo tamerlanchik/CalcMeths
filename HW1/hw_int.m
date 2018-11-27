@@ -9,7 +9,7 @@ if exist("./data/hw_int_cmd.txt")
     delete('./data/hw_int_cmd.txt');
 end
 diary ./data/hw_int_cmd.txt;
-% -------Нач знач------------
+% -------РќР°С‡ Р·РЅР°С‡------------
 
 a = 0.2;
 b = 0.7;
