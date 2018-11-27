@@ -2,17 +2,31 @@ clc;
 clear variables;
 close all force;
 
-% w = [1,2,3,4,5];
-% t=(1:1:10)
-% d = f(t(1:5)).*w
+% ws = {1,2,3};
+% defs = {4,5,6};
+% dict = containers.Map(ws, defs);
+% disp(dict(2));
+% dd = {8,9,10,11};
+% W = cell(4,1);
 % 
-% function y = f(x)
-%     y=x^2;
-% end
+% W{1} = [1, -1]';
+% W{2} = [-1/2, 2, -3/2]';
+% W{3} = [ -1/4, 4/3, -3, 4, -25/12 ]';
+% W{4} = [-1/6, 6/5, -15/4, 20/3, -15/2, 6, -49/20]';
+% A=cell(3,1);
+% A{1} = [1/2, 0, -1/2]';
+% A{2} = [-1/12, 2/3, 0, -2/3, 1/12]';
+% A{3} = [1/60, -3/20, 3/4, 0, -3/4, 3/20, -1/60]';
+% 
+% defs = {1,2,4,6};
+% M = containers.Map(defs, W);
+% E=containers.Map(defs(2:end), A);
+% disp(M(4))
+% disp(E(6))
 
 a = 0.2;
 b = 0.7;
-n = 10;
+n = 100;
 %------------2------------
 accDeg = [1,2,4,6];
 names = {'forward', 'backward', 'central'};
@@ -21,17 +35,20 @@ scalFuncDer = cell(length(accDeg)*length(names), 2);
 temp=1;
 clf;
 %в каждой строке пара векторов - df и t(сетка разбиений)
-% for i=1:1:length(accDeg)
-%     for j=1:1:length(names)
-%         [scalFuncDer{temp,:}] = lab_diff_do(a,b,n,names{j}, accDeg(i), @lab_diff_f);
-%         temp = temp + 1;
-% %         figure(temp-1);
-% %         plot(scalFuncDer{temp-1,:});
-% %         title(num2str(i)+" " + num2str(j));
-%     end
-% end
-% celldisp(scalFuncDer);
-[y,u] = lab_diff_do(a,b,n,names{1}, 1, @lab_diff_f)
+for i=1:1:length(accDeg)
+    for j=1:1:length(names)
+        if i==1 && j==3
+            break
+        end
+        [scalFuncDer{temp,:}] = lab_diff_do(a,b,n,names{j}, accDeg(i), @lab_diff_f);
+        temp = temp + 1;
+        figure(temp-1);
+        plot(scalFuncDer{temp-1,:});
+        title(num2str(i)+" " + num2str(j));
+    end
+end
+celldisp(scalFuncDer);
+% [y,u] = lab_diff_do(a,b,n,names{1}, 1, @lab_diff_f)
 
 %---------3------------
 
