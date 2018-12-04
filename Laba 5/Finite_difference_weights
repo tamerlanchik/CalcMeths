@@ -30,4 +30,4 @@ a=list(range(0, K+1))
 #backward
 a=list(range(-K, 0+1))
 print (a)
-print(getW(len(a)-1, x0, a))
+print(getW(len(a)-1, x0, a)[-1][-1])
