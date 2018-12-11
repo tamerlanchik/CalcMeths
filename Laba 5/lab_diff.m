@@ -8,23 +8,21 @@ df=@lab_diff_df;
 a = 0.2;
 b = 0.7;
 % n = 100;
-k=1;
-N=[10, 1000];
+figureNameCounter=1;
+N=[20, 1000];
 %------------2------------
 accDeg = [1,2,4,6];
 names = {'forward', 'backward', 'central'};
 scalFuncDer = cell(length(accDeg)*length(names)-1, 2);
 IE=zeros(length(accDeg),length(names), 2);
-tt=1
+epoch=1;
 for n=N
-    temp=1;
-    %в каждой строке пара векторов - df и t(сетка разбиений)
+    rowCounter=1;
+    %РІ РєР°Р¶РґРѕР№ СЃС‚СЂРѕРєРµ РїР°СЂР° РІРµРєС‚РѕСЂРѕРІ - df Рё t(СЃРµС‚РєР° СЂР°Р·Р±РёРµРЅРёР№)
     t=(a:(b-a)/(n-1):b);
     DF=df(t);
-
-
     %%2.4
-     figure(k);
+    figure(figureNameCounter);
     for i=1:1:length(accDeg)
          subplot(2,2,i)
          plot(t,DF);
@@ -33,53 +31,37 @@ for n=N
          grid minor;
          xlabel('t');
          ylabel('df');
-    %      legend({'True derivative','Forward differences', 'Backward differences', 'Central differences'},'Location','best');
-    %      legend(["wded", "forward", "backward", "central"]);
-        title("Порядок точности - "+num2str(accDeg(i)));
+         title("РџРѕСЂСЏРґРѕРє С‚РѕС‡РЅРѕСЃС‚Рё - "+num2str(accDeg(i)));
+         
         for j=1:1:length(names)
             if i==1 && j==3
                 break
             end
-            [scalFuncDer{temp,:}] = lab_diff_do(a,b,n,names{j}, accDeg(i), @lab_diff_f);
-    %         subplot(2,2,i);
-            plot(scalFuncDer{temp,:});
-            legend({'True derivative','Forward differences', 'Backward differences', 'Central differences'});
-    %         hold on;
-    %         title('Порядок точности - '+num2str(i));
-            temp = temp + 1;
+            [scalFuncDer{rowCounter,:}] = lab_diff_do(a,b,n,names{j}, accDeg(i), @lab_diff_f);
+            plot(scalFuncDer{rowCounter,:});
+            rowCounter = rowCounter + 1;
         end
+        legend({'True derivative','Forward differences', 'Backward differences', 'Central differences'});
     end
-    %celldisp(scalFuncDer);
-    % [y,u] = lab_diff_do(a,b,n,names{1}, 1, @lab_diff_f)
 
     %% 2.5
-    figure(k+1);
-    temp=1;
+    figure(figureNameCounter+1);
+    rowCounter=1;
     for i=1:1:length(accDeg)
         for j=1:1:length(names)
             if i==1 && j==3
                 break
             end
-            switch j
-                case 1
-                    s=1;
-                    fin=n-accDeg(i);
-                case 2
-                    s=accDeg(i)+1
-                    fin=n
-                case 3
-                    s=accDeg(i)/2+1;
-                    fin = n-accDeg(i)/2;
-            end
-            disp(size(scalFuncDer{temp,2}))
-            disp(size(DF(s:fin)))
-            IE(i,j,tt)=sum(abs(scalFuncDer{temp,2}-DF(s:fin)'));
-            temp = temp + 1;
-            
+            dError = abs(scalFuncDer{rowCounter,2}-DF');
+            temp = isnan(dError);
+            dError(temp)=0;
+            pointsCount=sum(temp==0);
+            IE(i,j,epoch)=sum(dError)/pointsCount;
+            rowCounter = rowCounter + 1;            
         end
     end
-    IE(:,:,tt)=IE(:,:,tt)./n;
-    bar(IE(:,:,tt)');
+    
+    bar(IE(:,:,epoch)');
     grid on;
     grid minor;
     legend('Degree 1','Degree 2','Degree 4','Degree 6');
@@ -87,8 +69,9 @@ for n=N
     xlabel('Finite differences');
     title('Integral relative error');
     ylabel('Error value');
-    k = k+2;
-    tt = tt+1;
+    
+    figureNameCounter = figureNameCounter+2;
+    epoch = epoch+1;
 end
 
 
