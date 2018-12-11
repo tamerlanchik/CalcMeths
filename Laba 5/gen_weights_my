@@ -2,8 +2,8 @@ clc;
 clear variables;
 close all force;
 
-name='central';
-k=4;
+name='forward';
+k=3;
 G = zeros(k+1);
 G(1,:)=ones(1,k+1);
 b=zeros(k+1, 1);
@@ -16,12 +16,10 @@ switch name
     case 'central'
         y=(k/2:-1:-k/2);
 end
-for i=(1:1:k+1)
-    fct=1;
-    for j=2:1:k+1
-        G(j,i) = y(i)^(j-1)/fct;
-        fct = fct*j;
-    end
+fct=1;
+for j=2:1:k+1
+    G(j,:) = y.^(j-1)/fct;
+    fct = fct*j;
 end
 [A,ok] = my_kramer(G, b)
 
