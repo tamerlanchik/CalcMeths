@@ -24,14 +24,20 @@ function [t,df] = lab_diff_do(a,b,n,name,k,f)
             for i=1:1:n-k
                 df(i) = sum(f(t(i+k:-1:i)).*W{rows(k), 1})/(t(i+1)-t(i));
             end
+            t = t(1:n-k);
+            df = df(1:n-k);
         case 'backward'
             for i=k+1:1:n
-                df(i) = sum(f(t(i:-1:i-k)).*W{rows(k), 1})/(t(i)-t(i-1));
+                df(i) = sum(f(t(i-k:1:i)).*(-W{rows(k), 1}))/(t(i)-t(i-1));
             end
+            t = t(k+1:end);
+            df = df(k+1:end);
         case 'central'
             for i=k/2+1:1:n-k/2
                 df(i) = sum(f(t(i+k/2:-1:i-k/2)).*W{rows(k), 2})/(t(i)-t(i-1));
             end
+            t = t(k/2+1:n-k/2);
+            df = df(k/2+1:n-k/2);
         otherwise
     end
 end
