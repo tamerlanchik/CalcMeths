@@ -24,7 +24,7 @@ end
 
 nested_function = @f2;
 figure(2);
-t=(-2:0.5:0);
+t=(-2:0.1:0);
 [X,Y] = meshgrid(t,t);
 
 surf(X,Y, nested_function(X,Y));
@@ -32,7 +32,7 @@ shading interp
 alpha 0.5;
 grid on; grid minor;
 hold on;
-for i=1:1:2
+for i=1:1:3
     [x,fMin,k]=optimal_vec(meth_names{2,i},KMax,eps)
     plot3(x(1),x(2), fMin, [shapes(i),'r']);
 end

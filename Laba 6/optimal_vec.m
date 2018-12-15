@@ -1,6 +1,5 @@
 function [x0, fMin, k] = optimal_vec(name, KMax, eps)
     f = @nested_function;
-    df = { @(x) 2*(x(1)+1), @(x) 2*(x(2)+1) };
     k = 0;
     x0 = zeros(2,1);
     x = ones(2,1);
@@ -10,7 +9,7 @@ function [x0, fMin, k] = optimal_vec(name, KMax, eps)
             while (norm(x-x0)>eps)&&(k<KMax)
                 x=x0;
                 for i=1:1:length(x)
-                    grad = (-1)*[df{1}(x0); df{2}(x0)];
+                    grad = gradient(x0);
                     F = @(arg) f(x0 + arg*grad);
                     l=lmin(0,2,eps,KMax,F);
                     x0(i)=x0(i)+l*grad(i);
@@ -20,13 +19,18 @@ function [x0, fMin, k] = optimal_vec(name, KMax, eps)
         case 'gradient'
             while (norm(x-x0)>eps)&&(k<KMax)
                 x=x0;
-                grad = (-1)*[df{1}(x0); df{2}(x0)];
+                grad = gradient(x0);
                 F = @(arg) f(x0 + arg*grad);
                 l=lmin(0,2,eps,KMax,F);
                 x0 = x0 + l*grad;
                 k = k+1;
             end
         case 'newton'
+            while (norm(x-x0)>eps)&&(k<KMax)
+               x=x0;
+               x0 = x + H(x0)^(-1)*gradient(x0);
+               k = k + 1;
+            end
         otherwise
     end
     fMin=f(x0);
@@ -40,7 +44,10 @@ function f = nested_function(x,y)
     end
 end
 function h = H(x)
-    h = [2, 0; 2, 0];
+    h = [2, 0; 0, 2];
+end
+function g = gradient(x)
+    g = (-1)*[2*(x(1)+1); 2*(x(2)+1)];
 end
 function xMin = lmin(a,b,eps,KMax,f)
     fi = (1+sqrt(5))/2;

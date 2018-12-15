@@ -12,7 +12,7 @@ function [x0, fMin, k] = optimal_vec(name, KMax, eps)
                 for i=1:1:length(x)
                     grad = (-1)*[df{1}(x0); df{2}(x0)];
                     F = @(arg) f(x0 + arg*grad);
-                    l=my_argmin(0,2,eps,KMax,F);
+                    l=lmin(0,2,eps,KMax,F);
                     x0(i)=x0(i)+l*grad(i);
                 end
                  k=k+1;
@@ -22,7 +22,7 @@ function [x0, fMin, k] = optimal_vec(name, KMax, eps)
                 x=x0;
                 grad = (-1)*[df{1}(x0); df{2}(x0)];
                 F = @(arg) f(x0 + arg*grad);
-                l=my_argmin(0,2,eps,KMax,F);
+                l=lmin(0,2,eps,KMax,F);
                 x0 = x0 + l*grad;
                 k = k+1;
             end
@@ -42,7 +42,11 @@ end
 function h = H(x)
     h = [2, 0; 2, 0];
 end
-function xMin = my_argmin(a,b,eps,KMax,f)
+function g = gradient(x)
+    df = { @(x) 2*(x(1)+1), @(x) 2*(x(2)+1) };
+    g = [2*(x(1)+1); 2*(x(2)+1)
+end
+function xMin = lmin(a,b,eps,KMax,f)
     fi = (1+sqrt(5))/2;
     x1 = b-(b-a)/fi;
     x2 = a+(b-a)/fi;
