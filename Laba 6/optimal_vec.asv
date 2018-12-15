@@ -7,21 +7,23 @@ function [x0, fMin, k] = optimal_vec(name, KMax, eps)
     
     switch name
         case 'coordinate_descent'
-            l=0.1;
             while (norm(x-x0)>eps)&&(k<KMax)
                 x=x0;
                 for i=1:1:length(x)
-                    pr=-df{i}(x0);
-                    x0(i)=x0(i)+l*pr;
+                    grad = (-1)*[df{1}(x0); df{2}(x0)];
+                    F = @(arg) f(x0 + arg*grad);
+                    l=my_argmin(0,2,eps,KMax,F);
+                    x0(i)=x0(i)+l*grad(i);
                 end
                  k=k+1;
             end
         case 'gradient'
-            l=0.1;
             while (norm(x-x0)>eps)&&(k<KMax)
                 x=x0;
-                pr = (-1)*[df{1}(x0); df{2}(x0)];
-                x0 = x0 + l*pr;
+                grad = (-1)*[df{1}(x0); df{2}(x0)];
+                F = @(arg) f(x0 + arg*grad);
+                l=my_argmin(0,2,eps,KMax,F);
+                x0 = x0 + l*grad;
                 k = k+1;
             end
         case 'newton'
@@ -40,27 +42,24 @@ end
 function h = H(x)
     h = [2, 0; 2, 0];
 end
-function lmin = my_argmin(a,b,eps,KMax,x,dF,isVec)
+function xMin = my_argmin(a,b,eps,KMax,f)
     fi = (1+sqrt(5))/2;
-    k = 0;
     x1 = b-(b-a)/fi;
     x2 = a+(b-a)/fi;
-    lmin=a;
-    if nargin==6
-    f = @(x) x+lmin*dF(x);
-    while (abs(b-a)>=e)&&(k<kmax)
-        k=k+1;
+    k=0;
+    while (abs(b-a)>=eps)&&(k<KMax)
+        k  = k+1;
         y1 = f(x1);
         y2 = f(x2);
-        if(y1>=y2)
-            a = x1;
+        if(y1 >= y2)
+            a  = x1;
             x1 = x2;
             x2 = a+(b-a)/fi;
         else
-            b = x2;
+            b  = x2;
             x2 = x1;
             x1 = b-(b-a)/fi;
         end
-        lmin = (a+b)/2;
     end
+    xMin = (a+b)/2;
 end
