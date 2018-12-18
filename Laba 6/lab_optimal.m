@@ -5,8 +5,8 @@ addpath("./algos");
 
 a=-5;
 b=5;
-eps = 10^(-7);
-KMax=10^4;
+eps = 10^(-2);
+KMax=10^2;
 meth_names={'uniform', 'dichotomy', 'golden_ratio'; 'coordinate_descent', 'gradient', 'newton'};
 %------------------------------
 nested_function = @f1;
@@ -39,5 +39,23 @@ for i=1:1:3
 end
 view([10,45]);
 
-disp(array2table(data));
+titles = {'Method', 'Minimum', 'Argmin', 'K'};
+meth_names={meth_names{1,:},meth_names{2,:}}'
+celldisp(data);
+temp=cell(6,4);
+temp(:,1)=meth_names;
+temp(:,2:4)=data;
+T=cell2table(temp(1:3,:));
+T.Properties.VariableNames=titles;
+disp(T);
+for i=1:1:length(meth_names)
+    temp{i,2}=mat2str(temp{i,2})
+end
+T=cell2table(temp);
+T.Properties.VariableNames=titles;
+disp(T);
+% disp(cell2table(temp(1:3,:)),'VariableNames', {'Method', 'Minimum', 'Argmin', 'K'})
+% % t=meth_names{1:3}
+% disp(cell2table({meth_names(1:3),data(1:3,1),data(1:3,2),data(1:3,3)}));
+% disp(cell2table(meth_names, data));
 
