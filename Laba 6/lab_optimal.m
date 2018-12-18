@@ -5,8 +5,8 @@ addpath("./algos");
 
 a=-5;
 b=5;
-eps = 10^(-2);
-KMax=10^2;
+eps = 10^(-3);
+KMax=10^6;
 meth_names={'uniform', 'dichotomy', 'golden_ratio'; 'coordinate_descent', 'gradient', 'newton'};
 %------------------------------
 nested_function = @f1;

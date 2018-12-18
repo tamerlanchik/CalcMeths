@@ -3,7 +3,7 @@ function [xMin, fMin, k] = optimal_sca(a,b,name,kmax,e)
     f = @nested_function;
     xMin=a;
     fMin=f(xMin);
-    fMin2=fMin-1;
+    fMin2
     
     switch name
         case 'uniform'
@@ -18,7 +18,7 @@ function [xMin, fMin, k] = optimal_sca(a,b,name,kmax,e)
                 end
             end
         case 'dichotomy'
-            while (abs(b-a)>=e)&&(k<kmax)&&(norm(fMin-fMin2)>=e)
+            while (abs(b-a)>=e)&&(k<kmax)&&(norm(f(x1)-f(x2)
                 k=k+1;
                 xMin=(a+b)/2;
                 d=(b-a)/4;
@@ -29,17 +29,14 @@ function [xMin, fMin, k] = optimal_sca(a,b,name,kmax,e)
                 else
                     b=xMin;
                 end
-                fMin2=fMin;
-                fMin=f(xMin);
             end
             xMin=(a+xMin)/2;
-%             fMin2=fMin;
             fMin=f(xMin);
         case 'golden_ratio'
             fi = (1+sqrt(5))/2;
             x1 = b-(b-a)/fi;
             x2 = a+(b-a)/fi;
-            while (abs(b-a)>=e)&&(k<kmax)&&(norm(fMin-fMin2)>=e)
+            while (abs(b-a)>=e)&&(k<kmax)
                 k  = k+1;
                 y1 = f(x1);
                 y2 = f(x2);
@@ -52,8 +49,6 @@ function [xMin, fMin, k] = optimal_sca(a,b,name,kmax,e)
                     x2 = x1;
                     x1 = b-(b-a)/fi;
                 end
-                fMin2=fMin;
-                fMin=f((a+b)/2);
             end
             xMin = (a+b)/2;
             fMin = f(xMin);
