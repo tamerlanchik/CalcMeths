@@ -40,7 +40,7 @@ end
 view([10,45]);
 
 titles = {'Method', 'Minimum', 'Argmin', 'K'};
-meth_names={meth_names{1,:},meth_names{2,:}}'
+meth_names={meth_names{1,:},meth_names{2,:}}';
 celldisp(data);
 temp=cell(6,4);
 temp(:,1)=meth_names;
