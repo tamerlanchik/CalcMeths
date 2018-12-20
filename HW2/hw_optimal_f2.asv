@@ -1,0 +1,6 @@
+function x = hw_optimal_f2(f,t,y,x0,fctOpt)
+    x=fmincon(@fnrm,x0,[],[],[],[],[],-100,100,fctOpt)
+    function f = fnrm(x)
+        f=(sum(sum(f(x,t)-y)))^(1/2);
+    end
+end

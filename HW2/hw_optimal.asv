@@ -1,0 +1,18 @@
+clc;
+clear variables;
+close all force;
+%%
+% xMin = zeros(2,2);
+% fMin = zeros(2,1);
+% 
+% x0 = ones(2,1);
+% 
+% fctOptSearch =optimset('MaxIter',2000,'MaxFunEvals',10^3,'TolX',10^(-10),'TolFun',10^(-10),'FinDiffRelStep',10^(-10),'FinDiffType','central','Display','iter');
+% fctOptCon = optimoptions('fmincon','MaxIter',2000,'MaxFunEvals',10^3,'TolX',10^(-10),'TolFun',10^(-10),'FiniteDifferenceStepSize',10^(-10),'FiniteDifferenceType','central','Display','iter');
+% [xMin(:,1),fMin(1)]=fminsearch(@hw_optimal_f,x0,fctOptSearch)
+% [xMin(:,2),fMin(2)]=fmincon(@hw_optimal_f,x0,[],[],[],[],[],[],[],fctOptCon)
+
+%%
+f = @(x,t) x(1).*exp(x(2).*t);
+t=(0:0.01:2);
+y1 = f(t,[5;-10])
