@@ -9,9 +9,9 @@ x0 = ones(2,1);
 
 fctOptSearch =optimset('MaxIter',2000,'MaxFunEvals',10^3,'TolX',10^(-10),'TolFun',10^(-10),'FinDiffRelStep',10^(-10),'FinDiffType','central','Display','iter');
 fctOptCon = optimoptions('fmincon','MaxIter',2000,'MaxFunEvals',10^3,'TolX',10^(-10),'TolFun',10^(-10),'FiniteDifferenceStepSize',10^(-10),'FiniteDifferenceType','central','Display','iter');
-[xMin(:,1),fMin(1)]=fminsearch(@hw_optimal_f,x0,fctOptSearch)
-[xMin(:,2),fMin(2)]=fmincon(@hw_optimal_f,x0,[],[],[],[],[],[],[],fctOptCon)
-% disp(table([xMin(:,1);fMin(1)],[xMin(:,2);fMin(2)],'RowNamess',{'xMin1','xMin2','fMin'}));
+[xMin(:,1),fMin(1)]=fminsearch(@hw_optimal_f,x0,fctOptSearch);
+[xMin(:,2),fMin(2)]=fmincon(@hw_optimal_f,x0,[],[],[],[],[],[],[],fctOptCon);
+disp(table([xMin(1,1);xMin(1,2)],[xMin(2,1);xMin(2,2)],[fMin(1);fMin(2)],'RowNames',{'fMinSearch','fMinCon'}, 'VariableNames', {'xMin1','xMin2','fMin'}));
 
 %%
 f = @(x,t) x(1).*exp(x(2).*t);
@@ -22,9 +22,9 @@ w=randn(1,length(t));
 y2 = y1 + 0.3*w;
 fctOptLSQ = optimoptions('lsqcurvefit',fctOptCon);
 xMin=zeros(3,2);
-xMin(1,:)=lsqcurvefit(f,x0,t,y1,[-100,-100],[100,100],fctOptLSQ)
-xMin(2,:)=lsqcurvefit(f,x0,t,y2,[-100,-100],[100,100],fctOptLSQ)
-xMin(3,:) = hw_optimal_f2(f,t,y2,x0,fctOptCon)
+xMin(1,:)=lsqcurvefit(f,x0,t,y1,[-100,-100],[100,100],fctOptLSQ);
+xMin(2,:)=lsqcurvefit(f,x0,t,y2,[-100,-100],[100,100],fctOptLSQ);
+xMin(3,:) = hw_optimal_f2(f,t,y2,x0,fctOptCon);
 
 figure(1);
 subplot(3,1,1);
