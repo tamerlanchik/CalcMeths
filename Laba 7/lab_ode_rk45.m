@@ -43,4 +43,5 @@ function [X,t]=lab_ode_rk45(tMin,tMax,f,x0)
         end
         X(:,k+1) = X(:,k) + (h*K*b1');
     end
+    X=X';
 end

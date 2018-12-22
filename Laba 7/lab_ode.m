@@ -28,7 +28,7 @@ figure(1);
 p=size(X3)
 o=size(T)
 % p=X1(:,1)
-plot(T,X3(2,:));
+plot(T,X3(:,1));
 hold on;
 grid on;
 grid minor;
