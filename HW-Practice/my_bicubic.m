@@ -16,19 +16,38 @@ function [F1, C] = my_bicubic(F0,C0,C)
     %интерполяционная сетка
     X1=C{1};
     Y1=C{2};
-    F1 = zeros(size(X1));
+    F1 = nan(size(X1));
     
     A = zeros(16);
     p=1; q=1;   %индексы интерполируемой точки
-    while(X1(p,p)<=X0(2,2))
-        p = p + 1;
-    end
-    while(Y1(q,q)<=Y0(2,2))
-        q = q + 1;
-    end
+%     while(X1(p,p)<X0(2,2))
+%         p = p + 1;
+%     end
+%     if X1(p+1,p+1)>X0(2,2)
+%         p=p+1;
+%     end
+%     while(Y1(q,q)<Y0(2,2))
+%         q = q + 1;
+%     end
+%     if Y1(q+1,q+1)>Y0(2,2)
+%         q=q+1;
+%     end
+    iii=[p,q]
     %i,j - координаты верхней левой точки квадрата, в котором интерполируем
     for i=2:1:size(X0,1)-2
         for j=2:1:size(Y0,2)-2
+            while(X1(p,p)<X0(i,j))
+                p = p + 1;
+            end
+            if X1(p+1,p+1)>X0(i,j)
+                p=p+1;
+            end
+            while(Y1(q,q)<Y0(i,j))
+                q = q + 1;
+            end
+            if Y1(q+1,q+1)>Y0(i,j)
+                q=q+1;
+            end
             fprintf('i=%d, j=%d\n',i,j)
             fprintf('X=%d, Y=%d\n', X0(i,j),Y0(i,j));
             %ищем alpha={a(i,j)} в виде строки [a11,a21,...]
@@ -48,7 +67,7 @@ function [F1, C] = my_bicubic(F0,C0,C)
                     temp=temp+1;
                 end
             end
-            A=A'
+            A=A';
             
 %             ooo=P(1,0)
 %             i=0;j=0;
@@ -69,10 +88,18 @@ function [F1, C] = my_bicubic(F0,C0,C)
 %             A(15,:)=pxy(i,j+1);
 %             A(16,:)=pxy(i+1,j+1);
 %             A=A
-            A=A^(-1)
+            A=A^(-1);
             %----------------------
             X=zeros(16,1);
-            X(1:4)=[F0(i,j),F0(i+1,j),F0(i,j+1),F0(i+1,j+1)];
+            temp=1;
+%             for m=[0,1]
+%                 for n=[0,1]
+%                     X(temp) = F0(X0(j+m,i+n),Y0(j+m,i+n));
+%                     temp=temp+1;
+%                 end
+%             end
+%             X(1:4)=[F0(i,j),F0(i+1,j),F0(i,j+1),F0(i+1,j+1)];
+            X(1:4)=[F0(j,i),F0(j,i+1),F0(j+1,i),F0(j+1,i+1)];
             %0------->x
             %|
             %|
@@ -91,7 +118,7 @@ function [F1, C] = my_bicubic(F0,C0,C)
                     temp = temp + 1;
                 end
             end
-
+            X=X
             ders = zeros(1,2*4);
             temp=1;
             %производные по Х для узлов квадрата, а также для узлов на 1
@@ -116,22 +143,26 @@ function [F1, C] = my_bicubic(F0,C0,C)
                 end
             end
             
-            alpha = A*X;
+            %до этого места верно
+            
+            alpha = A*X
             p0=p;
-            while X1(p,q)<X0(i,j)
-                while Y1(p,q)<Y0(i,j)
+            q0=q;
+            while X1(p,q)<X0(i+1,j+1)
+                while Y1(p,q)<Y0(i+1,j+1)
                     Px=0;
                     for k=0:1:3
-                        for l=0:0:3
-                            Px = Px+alpha(k*4+j)*(X1(p,q)^k)*(Y1(p,q)^l);
+                        for l=0:1:3
+                            Px = Px+alpha(k*4+l+1)*(X1(q,p)^k)*(Y1(q,p)^l);
                         end
                     end
-                    F1(p,q) = Px;
+                    F1(q,p) = Px;
                     p=p+1;
                 end
                 p=p0;
                 q = q+1;
             end
+            q=q0;
         end
     end
 end
