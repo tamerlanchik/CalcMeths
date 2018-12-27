@@ -1,7 +1,7 @@
 clc;
 clear variables;
 close all force;
-
+my_bicubic(1,2,3);
 Na = 5;
 Nb = 8*Na;
 a = [-3,-3];
