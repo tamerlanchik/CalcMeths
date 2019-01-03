@@ -1,13 +1,3 @@
-% function [F, C] = my_bicubic(F0,C0,C)
-%     p = size(C0);
-%     X0 = C0{1};
-%     Y0 = C0{2};
-%     X=C{1};
-%     Y=C{2};
-%     F = zeros(size(X));
-%     for i=
-%     
-% end
 function [F1, C] = my_bicubic(F0,C0,C)
     %https://en.wikipedia.org/wiki/Bicubic_interpolation#Computation
     %исходная сетка, X0(i,j) - координата по x
@@ -20,30 +10,21 @@ function [F1, C] = my_bicubic(F0,C0,C)
     
     A = zeros(16);
     p=1; q=1;   %индексы интерполируемой точки
-%     while(X1(p,p)<X0(2,2))
-%         p = p + 1;
-%     end
-%     if X1(p+1,p+1)>X0(2,2)
-%         p=p+1;
-%     end
-%     while(Y1(q,q)<Y0(2,2))
-%         q = q + 1;
-%     end
-%     if Y1(q+1,q+1)>Y0(2,2)
-%         q=q+1;
-%     end
-    iii=[p,q]
     %i,j - координаты верхней левой точки квадрата, в котором интерполируем
     for i=2:1:size(X0,1)-2
         for j=2:1:size(Y0,2)-2
+            fprintf("New iter\n");
+            %ищем начальную 
             while(X1(p,p)<X0(i,j))
                 p = p + 1;
+                fprintf("p\n");
             end
             if X1(p+1,p+1)>X0(i,j)
                 p=p+1;
             end
             while(Y1(q,q)<Y0(i,j))
                 q = q + 1;
+                fprintf("q\n");
             end
             if Y1(q+1,q+1)>Y0(i,j)
                 q=q+1;
@@ -63,42 +44,14 @@ function [F1, C] = my_bicubic(F0,C0,C)
                     A(:,temp+8) = py(X0(j+m,i+n),Y0(j+m,i+n));
                     A(:,temp+12) = pxy(X0(j+m,i+n),Y0(j+m,i+n));
                     
-                    fprintf('X=%d,Y=%d,temp=%d\n',X0(j+m,i+n),Y0(j+m,i+n),temp);
+%                     fprintf('X=%d,Y=%d,temp=%d\n',X0(j+m,i+n),Y0(j+m,i+n),temp);
                     temp=temp+1;
                 end
             end
             A=A';
-            
-%             ooo=P(1,0)
-%             i=0;j=0;
-%             A(1,:)=P(i,j);
-%             A(2,:)=P(i+1,j);
-%             A(3,:)=P(i,j+1);
-%             A(4,:)=P(i+1,j+1);
-%             A(5,:)=px(i,j);
-%             A(6,:)=px(i+1,j);
-%             A(7,:)=px(i,j+1);
-%             A(8,:)=px(i+1,j+1);
-%             A(9,:)=py(i,j);
-%             A(10,:)=py(i+1,j);
-%             A(11,:)=py(i,j+1);
-%             A(12,:)=py(i+1,j+1);
-%             A(13,:)=pxy(i,j);
-%             A(14,:)=pxy(i+1,j);
-%             A(15,:)=pxy(i,j+1);
-%             A(16,:)=pxy(i+1,j+1);
-%             A=A
             A=A^(-1);
             %----------------------
             X=zeros(16,1);
-            temp=1;
-%             for m=[0,1]
-%                 for n=[0,1]
-%                     X(temp) = F0(X0(j+m,i+n),Y0(j+m,i+n));
-%                     temp=temp+1;
-%                 end
-%             end
-%             X(1:4)=[F0(i,j),F0(i+1,j),F0(i,j+1),F0(i+1,j+1)];
             X(1:4)=[F0(j,i),F0(j,i+1),F0(j+1,i),F0(j+1,i+1)];
             %0------->x
             %|
@@ -118,7 +71,6 @@ function [F1, C] = my_bicubic(F0,C0,C)
                     temp = temp + 1;
                 end
             end
-            X=X
             ders = zeros(1,2*4);
             temp=1;
             %производные по Х для узлов квадрата, а также для узлов на 1
@@ -142,10 +94,8 @@ function [F1, C] = my_bicubic(F0,C0,C)
                     temp = temp + 1;
                 end
             end
-            
-            %до этого места верно
-            
-            alpha = A*X
+                       
+            alpha = A*X;
             p0=p;
             q0=q;
             while X1(p,q)<X0(i+1,j+1)
@@ -166,53 +116,36 @@ function [F1, C] = my_bicubic(F0,C0,C)
         end
     end
 end
+
 function t=P(x,y)
     t = zeros(1,16);
     for i=0:1:3
         for j=0:1:3
             t(j*4+i+1) = (x.^i).*(y.^j);
-%             fprintf('a%d-%d=%d\n',i,j,(x.^i).*(y.^j))
-%             fprintf('t, %d\n',j*4+i+1)
         end
     end
-%     fprintf('\n');
 end
 function t = px(x,y)
     t = zeros(1,16);
     for i=1:1:3
         for j=0:1:3
             t(j*4+i+1) = i*(x.^(i-1)).*(y.^j);
-%             fprintf('a%d-%d=%d\n',i,j,i*(x.^(i-1)).*(y.^j))
-%             fprintf('t, %d\n',j*4+i+1)
         end
     end
-%     fprintf('\n');
 end
 function t = py(x,y)
     t = zeros(1,16);
     for i=0:1:3
         for j=1:1:3
             t(j*4+i+1) = (x.^i).*(y.^(j-1))*j;
-%             fprintf('a%d-%d=%d\n',i,j,(x.^i).*(y.^(j-1))*j)
-%             fprintf('t, %d\n',j*4+i+1)
         end
     end
-%     fprintf('\n');
 end
 function t = pxy(x,y)
     t = zeros(1,16);
     for i=1:1:3
         for j=1:1:3
             t(j*4+i+1) = i*(x.^(i-1)).*(y.^(j-1))*j;
-%             fprintf('a%d-%d=%d\n',i,j,i*(x.^(i-1)).*(y.^(j-1))*j)
-%             fprintf('t, %d\n',j*4+i+1)
         end
     end
-%     fprintf('\n');
-end
-function F = my_cubic_interpolate(p,x)
-    F = p(2);
-    F = F -((1/2)*p(1) + (1/2)*p(3)).*x;
-    F = F + (p(1)-2.5*p(2)+2*p(3)-0.5*p(4)).*x.^2;
-    F = F + (-0.5*p(1)+1.5*p(2)-1.5*p(3)+0.5*p(4)).*x.^2;
 end

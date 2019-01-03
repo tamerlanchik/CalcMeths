@@ -58,4 +58,3 @@ shading interp;
 alpha 0.7;
 grid on;
 grid minor;
-view([45,45]);
