@@ -7,7 +7,7 @@ function [F1, C] = my_bicubic(F0,C0,C)
     %интерпол€ционна€ сетка
     X1=C{1};
     Y1=C{2};
-    F1 = nan(size(X1));
+    F1 = zeros(size(X1));
     
     A = zeros(16);
     p=1; q=1;   %индексы интерполируемой точки
@@ -116,10 +116,10 @@ function [F1, C] = my_bicubic(F0,C0,C)
             q0=q;
             alpha=alpha
             fprintf("Start: p=%d, q=%d\n",p,q);
-            while Y1(q,p)<Y0(i+1,j+1)
+            while Y1(q,p)<X0(i+1,j+1)
                 fprintf("X1=%d, Y1=%d\n",X1(q,p),Y1(q,p));
-                fprintf("X0=%d, Y0=%d\n",X0(i+1,j+1),Y0(i+1,j+1));
-                while X1(q,p)<X0(i+1,j+1)
+                fprintf("X1=%d, Y1=%d\n",X1(q,p),Y1(q,p));
+                while X1(q,p)<Y0(i+1,j+1)
                     fprintf("p=%d, q=%d\n",p,q);
                     Px=0;
                     for k=0:1:3

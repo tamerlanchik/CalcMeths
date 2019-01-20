@@ -2,8 +2,8 @@ clc;
 clear variables;
 close all force;
 
-Na = 5;
-Nb = 10*Na;
+Na = 10;
+Nb = 5*Na;
 a = [-10,-10];    %left bottom point
 b = [10,10];      %right top point
 
@@ -54,7 +54,7 @@ grid minor;
 
 subplot(2,2,4);
 surf(X,Y,F2);
-shading interp;
+% shading interp;
 alpha 0.7;
 grid on;
 grid minor;
