@@ -3,9 +3,9 @@ clear variables;
 close all force;
 
 Na = 10;
-Nb = 5*Na;
-a = [-10,-10];    %left bottom point
-b = [10,10];      %right top point
+Nb = 50*Na;
+a = [-30,-30];    %left bottom point
+b = [30,30];      %right top point
 
 %interpolated grid
 T0 = zeros(Na, 2);
@@ -54,8 +54,8 @@ grid minor;
 
 subplot(2,2,4);
 surf(X,Y,F2);
-% shading interp;
+shading interp;
 alpha 0.7;
 grid on;
 grid minor;
-view([45,45]);
+% view([45,45]);

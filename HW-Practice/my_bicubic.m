@@ -44,9 +44,9 @@ function [F1, C] = my_bicubic(F0,C0,C)
 %             if Y1(q+1,q+1)>Y0(i,j)
 %                 q=q+1;
 %             end
-            fprintf('i=%d, j=%d\n',i,j)
-            fprintf('p=%d, q=%d\n',p,q)
-            fprintf('X=%d, Y=%d\n', X0(i,j),Y0(i,j));
+%             fprintf('i=%d, j=%d\n',i,j)
+%             fprintf('p=%d, q=%d\n',p,q)
+%             fprintf('X=%d, Y=%d\n', X0(i,j),Y0(i,j));
             %ищем alpha={a(i,j)} в виде строки [a11,a21,...]
             %X = [f(0,0),f(1,0),f(0,1),f(1,1),fx(0,0), ... ,fy(0,0), ..., fxy(0,0), ...]
             %приходим к уравнению A^(-1)*X=alpha
@@ -55,10 +55,12 @@ function [F1, C] = my_bicubic(F0,C0,C)
             temp=1;
             for m=[0,1]
                 for n=[0,1]
-                    A(:,temp) = P(X0(j+m,i+n),Y0(j+m,i+n));
-                    A(:,temp+4) = px(X0(j+m,i+n),Y0(j+m,i+n));
-                    A(:,temp+8) = py(X0(j+m,i+n),Y0(j+m,i+n));
-                    A(:,temp+12) = pxy(X0(j+m,i+n),Y0(j+m,i+n));
+                    pX=X0(j+m,i+n);
+                    pY = Y0(j+m,i+n);
+                    A(:,temp) = P(pX,pY);
+                    A(:,temp+4) = px(pX,pY);
+                    A(:,temp+8) = py(pX,pY);
+                    A(:,temp+12) = pxy(pX,pY);
                     
 %                     fprintf('X=%d,Y=%d,temp=%d\n',X0(j+m,i+n),Y0(j+m,i+n),temp);
                     temp=temp+1;
@@ -69,10 +71,10 @@ function [F1, C] = my_bicubic(F0,C0,C)
             %----------------------
             X=zeros(16,1);
             X(1:4)=[F0(j,i),F0(j,i+1),F0(j+1,i),F0(j+1,i+1)];
-            %0------->x
+            %0-------> x, j, p
             %|
             %|
-            %Vy
+            %V y, i, q
 
             % Fx(0,0), Fx(1,0), Fx(0,1), Fx(1,1)
             % Fy(0,0), Fy(1,0), Fy(0,1), Fy(1,1)
@@ -115,12 +117,12 @@ function [F1, C] = my_bicubic(F0,C0,C)
             p0=p;
             q0=q;
             alpha=alpha
-            fprintf("Start: p=%d, q=%d\n",p,q);
+%             fprintf("Start: p=%d, q=%d\n",p,q);
             while Y1(q,p)<Y0(i+1,j+1)
-                fprintf("X1=%d, Y1=%d\n",X1(q,p),Y1(q,p));
-                fprintf("X0=%d, Y0=%d\n",X0(i+1,j+1),Y0(i+1,j+1));
+%                 fprintf("X1=%d, Y1=%d\n",X1(q,p),Y1(q,p));
+%                 fprintf("X0=%d, Y0=%d\n",X0(i+1,j+1),Y0(i+1,j+1));
                 while X1(q,p)<X0(i+1,j+1)
-                    fprintf("p=%d, q=%d\n",p,q);
+%                     fprintf("p=%d, q=%d\n",p,q);
                     Px=0;
                     for k=0:1:3
                         for l=0:1:3
