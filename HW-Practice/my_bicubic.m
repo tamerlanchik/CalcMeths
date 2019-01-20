@@ -35,10 +35,7 @@ function [F1, C] = my_bicubic(F0,C0,C)
                 q = q + 1;
             end
             
-            %представл€ем alpha={a(i,j)} в виде строки [a11,a21,...]
-            %приходим к уравнению A^(-1)*X=alpha
-            %искомое F(x1,y1) = sum(sum(a(i,j)*X^i*Y^j))
-            
+            %представл€ем alpha={a(i,j)} в виде строки [a11,a21,...]            
             %разбиваем ј на группы по 4
             temp=1;     %temp - номер в группе
             for m=[0,1]
@@ -106,15 +103,15 @@ function [F1, C] = my_bicubic(F0,C0,C)
             alpha = A*X;
             p0 = p;
             q0 = q;
-            while Y1(q,p)<Y0(i+1,j+1)
-                while X1(q,p)<X0(i+1,j+1)
+            while Y1(q,q)<Y0(i+1,j+1)
+                while X1(p,p)<X0(i+1,j+1)
                     value=0;
                     for k=0:1:3
                         for l=0:1:3
                             value = value + alpha(k*4+l+1)*(X1(q,p)^k)*(Y1(q,p)^l);
                         end
                     end
-                    F1(q,p) = value;
+                    F1(p,q) = value;    %костыль: мен€ем значение p и q. Ќадо найти источник проблемы
                     p = p + 1;
                 end
                 p=p0;
