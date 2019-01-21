@@ -25,8 +25,6 @@ function [F1, C] = my_bicubic(F0,C0,C)
     
     %для нахождения значения производных нужны боковые границы на начальной
     %сетке в 1 шаг.
-    averN=0;
-    averRatio=0;
     STime=toc;
     fprintf("Start bicubic. First stage: %d s\n", STime);
     for i=2:1:size(X0,1)-2
@@ -108,7 +106,7 @@ function [F1, C] = my_bicubic(F0,C0,C)
             A = A^(-1);
             alpha = A*X;
             TTemp=toc;
-%             fprintf("Calc alpha: %d s\n",TTemp);
+            fprintf("Calc alpha: %d s\n",TTemp);
             STime = STime + TTemp;
             tic;
             p0 = p;
@@ -128,15 +126,10 @@ function [F1, C] = my_bicubic(F0,C0,C)
                 q = q + 1;
             end
             q = q0;
-            TTemp1 = toc;
-%             fprintf("Calc points: %d s\n", TTemp1);
-            averRatio = averRatio+TTemp/TTemp1;
-            averN = averN+1;
-%             fprintf("Alpha/Calc=%d\n\n", TTemp/TTemp1);
-            STime = STime + TTemp1;
+            TTemp = toc;
+            f
         end
     end
-    fprintf("Aver ratio: %d \n\n", averRatio/averN);
 end
 
 function t=P(x,y)
