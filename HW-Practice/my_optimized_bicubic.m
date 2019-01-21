@@ -1,7 +1,8 @@
-function [F1, C] = my_optimized_bicubic(F0,C0,C)
+function [F1, C] = my_bicubic(F0,C0,C)
     %https://en.wikipedia.org/wiki/Bicubic_interpolation#Computation
     %Работаем с квадратом 4х4 изначальной сетки
     %интерполируемая сетка, X0(i,j) - координата по x
+    tic;
     X0 = C0{1};
     Y0 = C0{2};
     %интерполяционная сетка
@@ -27,6 +28,7 @@ function [F1, C] = my_optimized_bicubic(F0,C0,C)
     for i=2:1:size(X0,1)-2
         p=1;
         for j=2:1:size(Y0,2)-2            
+            tic;
             %ищем начальную точку на интерполяционной сетке
             while(X1(p,p)<X0(i,j))
                 p = p + 1;
@@ -86,9 +88,6 @@ function [F1, C] = my_optimized_bicubic(F0,C0,C)
                 end
             end
             
-            % Fxy(0,0), Fxy(1,0), Fxy(0,1), Fxy(1,1)
-            %Fxy(0,0) = (Fx(0,1)-Fx(0,-1))/(Y0(0,1)-Y0(0,-1))
-            %Fxy(i,j) = (Fx(i,j+1)-Fx(i,j-1))/(Y0(i,j+1)-Y0(i,j-1))
             temp=13;
             for m=[0,1]
                 for n=[0,1]
@@ -97,17 +96,9 @@ function [F1, C] = my_optimized_bicubic(F0,C0,C)
                 end
             end
                        
-            
             A = A';
 %             A = A^(-1);
-            %A*alpha=X
 %             alpha = A*X;
-%             alpha = my_kramer(A',X);
-%             [L,U]=lu(A);
-%             A = U^(-1)*L^(-1);
-%             alpha = A*X;
-%             beta = L\X;
-%             alpha = U\beta;
             alpha=linsolve(A,X);
             p0 = p;
             q0 = q;
@@ -119,7 +110,7 @@ function [F1, C] = my_optimized_bicubic(F0,C0,C)
                             value = value + alpha(k*4+l+1)*(X1(q,p)^k)*(Y1(q,p)^l);
                         end
                     end
-                    F1(p,q) = value;    %костыль: меняем значение p и q. Надо найти источник проблемы
+                    F1(p,q) = value;
                     p = p + 1;
                 end
                 p=p0;
@@ -160,70 +151,5 @@ function t = pxy(x,y)
         for j=1:1:3
             t(j*4+i+1) = i*(x.^(i-1)).*(y.^(j-1))*j;
         end
-    end
-end
-function [x,ok] = my_kramer(A,b)
-    [n,m] = size(A);
-    d=det(A);
-    x = zeros(n,1);
-    if (n ~= m || d==0)
-        ok=false;
-    else
-        for i=(1:1:n)
-            T = A;
-            T(:,i)=b;
-            x(i) = det(T)/d;
-        end
-        ok=true;
-    end
-end
-function [l,u] = my_lu(x)
-    if x(1,1)==0
-        fprintf('Cannot calc LU');
-        l = 0;
-        u = 0;
-    else
-        l = zeros(size(x));
-        u = zeros(size(x));
-
-        for j=1:1:size(x,2)
-            u(1,j) = x(1, j);
-            l(j, 1) = x(j, 1)/u(1,1);
-        end
-
-        for i=2:1:size(x,1)
-            for j=i:1:size(x,2)
-                temp = 0;
-                for k=1:1:(i-1)
-                   temp = temp + l(i,k)*u(k,j); 
-                end
-                u(i,j) = x(i,j) - temp;
-
-                temp = 0;
-                for k=1:1:(i-1)
-                    temp = temp + l(j,k)*u(k,i);
-                end
-                l(j,i) = (x(j,i)-temp)/u(i,i);
-            end
-        end
-    end
-end
-function [Q,R]=my_qr(X)
-    B=zeros(size(X));
-    Q=zeros(size(X));
-
-    for k=1:1:size(X,2)
-        x = X(:,k);
-        temp=0;
-        for j=1:1:(k-1)
-            temp=temp+proj(x,B(:,j));
-        end
-        B(:,k)=x-temp;
-        Q(:,k)=B(:,k)./norm(B(:,k),'fro');
-    end
-    R=(Q')*X;
-    function p=proj(y,z)
-        %p=dot(y,z)/norm(z,'fro');
-        p = dot(y,z)*z/dot(z,z);
     end
 end

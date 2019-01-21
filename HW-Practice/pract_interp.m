@@ -61,7 +61,7 @@ for fN=1:1:size(fList,1)
     F=zeros(size(F0,1),size(F0,2),3);
     triesNumber=1;
     for j=1:1:triesNumber
-        for m = 1:1:2
+        for m = 1:1:3
             tic;
             F(:,:,m) = meths{m}(fList{fN}(X0,Y0), {X0,Y0}, {X,Y});
             timeAverage(m) = timeAverage(m) + toc;
@@ -88,8 +88,8 @@ for fN=1:1:size(fList,1)
     F(temp)=0;
     Err = [Err, squeeze(sum(sum(F))./pointsCount)];
 end
-Err(3,:)=[];
-Time(:,3)=[];
+% Err(3,:)=[];
+% Time(:,3)=[];
 
 methNames={'Bilinear', 'Bicubic', 'Bicubic optimized'};
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=30, Nb=150');

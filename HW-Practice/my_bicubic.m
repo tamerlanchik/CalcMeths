@@ -25,10 +25,6 @@ function [F1, C] = my_bicubic(F0,C0,C)
     
     %для нахождения значения производных нужны боковые границы на начальной
     %сетке в 1 шаг.
-    averN=0;
-    averRatio=0;
-    STime=toc;
-    fprintf("Start bicubic. First stage: %d s\n", STime);
     for i=2:1:size(X0,1)-2
         p=1;
         for j=2:1:size(Y0,2)-2            
@@ -92,9 +88,6 @@ function [F1, C] = my_bicubic(F0,C0,C)
                 end
             end
             
-            % Fxy(0,0), Fxy(1,0), Fxy(0,1), Fxy(1,1)
-            %Fxy(0,0) = (Fx(0,1)-Fx(0,-1))/(Y0(0,1)-Y0(0,-1))
-            %Fxy(i,j) = (Fx(i,j+1)-Fx(i,j-1))/(Y0(i,j+1)-Y0(i,j-1))
             temp=13;
             for m=[0,1]
                 for n=[0,1]
@@ -103,14 +96,9 @@ function [F1, C] = my_bicubic(F0,C0,C)
                 end
             end
                        
-            
             A = A';
             A = A^(-1);
             alpha = A*X;
-            TTemp=toc;
-%             fprintf("Calc alpha: %d s\n",TTemp);
-            STime = STime + TTemp;
-            tic;
             p0 = p;
             q0 = q;
             while Y1(q,q)<Y0(i+1,j+1)
@@ -121,22 +109,15 @@ function [F1, C] = my_bicubic(F0,C0,C)
                             value = value + alpha(k*4+l+1)*(X1(q,p)^k)*(Y1(q,p)^l);
                         end
                     end
-                    F1(p,q) = value;    %костыль: меняем значение p и q. Надо найти источник проблемы
+                    F1(p,q) = value;
                     p = p + 1;
                 end
                 p=p0;
                 q = q + 1;
             end
             q = q0;
-            TTemp1 = toc;
-%             fprintf("Calc points: %d s\n", TTemp1);
-            averRatio = averRatio+TTemp/TTemp1;
-            averN = averN+1;
-%             fprintf("Alpha/Calc=%d\n\n", TTemp/TTemp1);
-            STime = STime + TTemp1;
         end
     end
-    fprintf("Aver ratio: %d \n\n", averRatio/averN);
 end
 
 function t=P(x,y)
