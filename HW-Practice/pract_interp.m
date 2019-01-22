@@ -2,8 +2,8 @@ clc;
 clear variables;
 close all force;
 
-Na = 10;
-Nb = 5*Na;
+Na = 5;
+Nb = 10*Na;
 a = [-5,-5];    %left bottom point
 b = [5,5];      %right top point
 
@@ -59,7 +59,7 @@ for fN=1:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=30;
+    triesNumber=1;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -142,7 +142,7 @@ for fN=1:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=30;
+    triesNumber=100;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
