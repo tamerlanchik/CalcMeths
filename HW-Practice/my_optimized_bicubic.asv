@@ -97,7 +97,14 @@ function [F1, C] = my_bicubic(F0,C0,C)
             end
                        
             A = A';
-            alpha=my_kramer(A,X);
+%             A = A^(-1);
+%             alpha = A*X;
+%             alpha=linsolve(A,X);
+% %             alpha=my_kramer(A,X);
+%             [Q,R]=my_qr(A);
+%             alpha=(R^(-1)*Q')*X;
+                [Q, R] = qr(A);
+                ALPH = R\(Q'*B)
             p0 = p;
             q0 = q;
             while Y1(q,q)<Y0(i+1,j+1)
@@ -166,4 +173,19 @@ function [x,ok] = my_kramer(A,b)
         end
         ok=true;
     end
+end
+function [Q,R]=my_qr(X)
+    B=zeros(size(X));
+    Q=zeros(size(X));
+
+    for k=1:1:size(X,2)
+        x = X(:,k);
+        temp=0;
+        for j=1:1:(k-1)
+            temp=temp+dot(x,B(:,j))*B(:,j)/dot(B(:,j),B(:,j));
+        end
+        B(:,k)=x-temp;
+        Q(:,k)=B(:,k)./norm(B(:,k),'fro');
+    end
+    R=(Q')*X;
 end

@@ -99,6 +99,7 @@ function [F1, C] = my_bicubic(F0,C0,C)
             A = A';
             A = A^(-1);
             alpha = A*X;
+            
             p0 = p;
             q0 = q;
             while Y1(q,q)<Y0(i+1,j+1)
@@ -119,7 +120,21 @@ function [F1, C] = my_bicubic(F0,C0,C)
         end
     end
 end
-
+function [x,ok] = my_kramer(A,b)
+    [n,m] = size(A);
+    d=det(A);
+    x = zeros(n,1);
+    if (n ~= m || d==0)
+        ok=false;
+    else
+        for i=(1:1:n)
+            T = A;
+            T(:,i)=b;
+            x(i) = det(T)/d;
+        end
+        ok=true;
+    end
+end
 function t=P(x,y)
     t = zeros(1,16);
     for i=0:1:3

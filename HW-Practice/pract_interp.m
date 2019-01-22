@@ -2,7 +2,7 @@ clc;
 clear variables;
 close all force;
 
-Na = 30;
+Na = 10;
 Nb = 5*Na;
 a = [-5,-5];    %left bottom point
 b = [5,5];      %right top point
@@ -59,7 +59,7 @@ for fN=1:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=1;
+    triesNumber=30;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -91,7 +91,7 @@ end
 % Err(3,:)=[];
 % Time(:,3)=[];
 
-methNames={'Bilinear', 'Bicubic', 'Bicubic optimized'};
+methNames={'Bilinear', 'Bicubic', 'Bicubic Kramer'};
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=30, Nb=150');
 subplot(1,2,1);
 bar(log10(Err'+1));
@@ -111,6 +111,12 @@ ylabel("Work time, s");
 grid on;
 grid minor;
 legend(methNames);
+
+figure(9);
+bar(Err(:,end)');
+% ylim([0,0.0003]);
+xticklabels(methNames);
+ylabel('Relative error per point');
 
 Na = 5;
 Nb = 30*Na;
@@ -136,9 +142,9 @@ for fN=1:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=1;
+    triesNumber=30;
     for j=1:1:triesNumber
-        for m = 1:1:2
+        for m = 1:1:3
             tic;
             F(:,:,m) = meths{m}(fList{fN}(X0,Y0), {X0,Y0}, {X,Y});
             timeAverage(m) = timeAverage(m) + toc;
@@ -153,20 +159,19 @@ for fN=1:1:size(fList,1)
     F(temp)=0;
     Err = [Err, squeeze(sum(sum(F))./pointsCount)];
 end
-Err(3,:)=[];
-Time(:,3)=[];
-
-methNames={'Bilinear', 'Bicubic', 'Bicubic optimized'};
+% Err(3,:)=[];
+% Time(:,3)=[];
+QQQ=log10(Err+1)
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=5, Nb=150');
 subplot(1,2,1);
-bar(log10(Err'+1));
+bar(Err');
 xticklabels(fNames);
 xlabel('Function names');
 ylabel('Relative error per point');
 grid on;
 grid minor;
 legend(methNames);
-ylim([0,3]);
+ylim([0,50]);
 
 subplot(1,2,2);
 bar(Time);
@@ -176,3 +181,9 @@ ylabel("Work time, s");
 grid on;
 grid minor;
 legend(methNames);
+
+figure(10);
+bar(Err(:,end)');
+% ylim([0,0.0003]);
+xticklabels(methNames);
+ylabel('Relative error per point');
