@@ -2,7 +2,7 @@ clc;
 clear variables;
 close all force;
 
-Na = 7;
+Na = 5;
 Nb = 5*Na;
 a = [-50,-50];    %left bottom point
 b = [50,50];      %right top point
@@ -70,25 +70,19 @@ for fN=1:1:size(fList,1)
     timeAverage = timeAverage./triesNumber;
     Time=[Time; timeAverage];
     
-  
+    FTemp=F;
+    F0=fList{fN}(X0,Y0);
+    F0(
 %     figure(fN);
     figure('NumberTitle', 'off', 'Name', fNames{fN});
 %     name("efe");
-%     subplot(2,2,1);
-%     surf(X0,Y0,fList{fN}(X0,Y0));
-%     alpha 0.7;
+    subplot(2,2,1);
+    surf(X0,Y0,fList{fN}(X0,Y0));
+    alpha 0.7;
     
     for j=1:1:size(meths,1)-1
         subplot(2,2,j);
-        FT=fList{fN}(X0,Y0);
-%         sum(sum(isnan(F(:,:,j))))~=0
-        if sum(sum(isnan(F(:,:,j))))~=0
-            FT(1,:)=nan;
-            FT(end,:)=nan;
-            FT(:,1)=nan;
-            FT(:,end)=nan;
-        end
-        surf(X0,Y0,FT);
+        surf(X0,Y0,fList{fN}(X0,Y0));
         alpha 0.7;
        subplot(2,2, 2+j);
        surf(X,Y,F(:,:,j));
