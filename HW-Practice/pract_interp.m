@@ -2,7 +2,7 @@ clc;
 clear variables;
 close all force;
 
-Na = 100;
+Na = 30;
 Nb = 5*Na;
 a = [-1,-1];    %left bottom point
 b = [1,1];      %right top point
@@ -99,7 +99,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=100;
+    triesNumber=50;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -166,8 +166,8 @@ for fN=2:1:size(fList,1)
     F(temp)=0;
     Err = [Err, squeeze(sum(sum(F))./pointsCount)];
 end
-% Err(3,:)=[];
-% Time(:,3)=[];
+Err(1,:)=[];
+Time(:,1)=[];
 
 methNames={'Bilinear', 'Bicubic', 'Bicubic Kramer'};
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=30, Nb=150');
@@ -179,7 +179,7 @@ ylabel('Relative error per point');
 grid on;
 grid minor;
 legend(methNames);
-ylim([0,3]);
+% ylim([0,3]);
 
 subplot(1,2,2);
 bar(Time);
@@ -190,7 +190,7 @@ grid on;
 grid minor;
 legend(methNames);
 
-figure(9);
+figure(30);
 bar(Err(:,end)');
 % ylim([0,0.0003]);
 xticklabels(methNames);
@@ -220,7 +220,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=100;
+    triesNumber=50;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -237,8 +237,8 @@ for fN=2:1:size(fList,1)
     F(temp)=0;
     Err = [Err, squeeze(sum(sum(F))./pointsCount)];
 end
-% Err(3,:)=[];
-% Time(:,3)=[];
+Err(1,:)=[];
+Time(:,1)=[];
 QQQ=log10(Err+1)
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=5, Nb=150');
 subplot(1,2,1);
@@ -249,7 +249,7 @@ ylabel('Relative error per point');
 grid on;
 grid minor;
 legend(methNames);
-ylim([0,50]);
+ylim([0,20]);
 
 subplot(1,2,2);
 bar(Time);
@@ -260,7 +260,7 @@ grid on;
 grid minor;
 legend(methNames);
 
-figure(10);
+figure(40);
 bar(Err(:,end)');
 % ylim([0,0.0003]);
 xticklabels(methNames);
