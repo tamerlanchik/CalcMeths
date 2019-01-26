@@ -2,15 +2,10 @@ clc;
 clear variables;
 close all force;
 
-Na = 30;
+Na = 10;
 Nb = 5*Na;
 a = [-1,-1];    %left bottom point
 b = [1,1];      %right top point
-
-
-
-
-
 %interpolated grid
 T0 = zeros(Na, 2);
 T0(:,1) = (a(1):(b(1)-a(1))/(Na-1):b(1))';
@@ -62,13 +57,6 @@ fZones{6,1} = [-50;-50];
 fZones{6,2} = [50;50];
 
 
-[X0,Y0] = meshgrid((a(1):0.1:b(1))',(a(2):0.1:b(2))');
-for fN=2:1:size(fList,1)
-    figure(fN);
-    surf(X0,Y0,fList{fN}(X0,Y0));
-    shading interp;
-end
-
 %grid
 [X0,Y0] = meshgrid(T0(:,1),T0(:,2));
 [X,Y] = meshgrid(T(:,1),T(:,2));
@@ -80,8 +68,6 @@ for fN=2:1:size(fList,1)
 % for fN=4:1:4
     a = fZones{fN,1};
     b = fZones{fN,2};
-    a=a
-    b=b
     %interpolated grid
     T0 = zeros(Na, 2);
     T0(:,1) = (a(1):(b(1)-a(1))/(Na-1):b(1))';
@@ -99,7 +85,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=50;
+    triesNumber=1;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -166,14 +152,14 @@ for fN=2:1:size(fList,1)
     F(temp)=0;
     Err = [Err, squeeze(sum(sum(F))./pointsCount)];
 end
-Err(1,:)=[];
-Time(:,1)=[];
+% Err(1,:)=[];
+% Time(:,1)=[];
 
 methNames={'Bilinear', 'Bicubic', 'Bicubic Kramer'};
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=30, Nb=150');
 subplot(1,2,1);
 bar(log10(Err'+1));
-xticklabels(fNames);
+xticklabels(fNames(2:end));
 xlabel('Function names');
 ylabel('Relative error per point');
 grid on;
@@ -183,7 +169,7 @@ legend(methNames);
 
 subplot(1,2,2);
 bar(Time);
-xticklabels(fNames);
+xticklabels(fNames(2:end));
 xlabel('Function names');
 ylabel("Work time, s");
 grid on;
@@ -220,7 +206,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=50;
+    triesNumber=1;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -237,13 +223,13 @@ for fN=2:1:size(fList,1)
     F(temp)=0;
     Err = [Err, squeeze(sum(sum(F))./pointsCount)];
 end
-Err(1,:)=[];
-Time(:,1)=[];
+% Err(1,:)=[];
+% Time(:,1)=[];
 QQQ=log10(Err+1)
 figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=5, Nb=150');
 subplot(1,2,1);
 bar(Err');
-xticklabels(fNames);
+xticklabels(fNames(2:end));
 xlabel('Function names');
 ylabel('Relative error per point');
 grid on;
@@ -253,7 +239,7 @@ ylim([0,20]);
 
 subplot(1,2,2);
 bar(Time);
-xticklabels(fNames);
+xticklabels(fNames(2:end));
 xlabel('Function names');
 ylabel("Work time, s");
 grid on;
