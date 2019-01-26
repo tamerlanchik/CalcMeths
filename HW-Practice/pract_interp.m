@@ -2,10 +2,14 @@ clc;
 clear variables;
 close all force;
 
-Na = 7;
+Na = 100;
 Nb = 5*Na;
-a = [-50,-50];    %left bottom point
-b = [50,50];      %right top point
+a = [-1,-1];    %left bottom point
+b = [1,1];      %right top point
+
+
+
+
 
 %interpolated grid
 T0 = zeros(Na, 2);
@@ -44,7 +48,7 @@ fZones{3,2} = [5;5];
 %Not smooth
 fList{4} = @(x,y) abs(x.^2 + sin(0.5*pi*y) - y);
 fNames{4} = 'Not smooth';
-fZones{4,1} = [0;0];
+fZones{4,1} = [-1;-1];
 fZones{4,2} = [1;1];
 %Sibson
 fList{5} = @(x,y) cos(4*pi*((x-0.25).^2 + (y-0.25).^2).^(1/2));
@@ -57,6 +61,14 @@ fNames{6}='Paraboloid';
 fZones{6,1} = [-50;-50];
 fZones{6,2} = [50;50];
 
+
+[X0,Y0] = meshgrid((a(1):0.1:b(1))',(a(2):0.1:b(2))');
+for fN=2:1:size(fList,1)
+    figure(fN);
+    surf(X0,Y0,fList{fN}(X0,Y0));
+    shading interp;
+end
+
 %grid
 [X0,Y0] = meshgrid(T0(:,1),T0(:,2));
 [X,Y] = meshgrid(T(:,1),T(:,2));
@@ -65,6 +77,7 @@ meths = { @(A,B,C) my_bilinear(A,B,C); @(A,B,C) my_bicubic(A,B,C); @(A,B,C) my_o
 Err=[];
 Time=[];
 for fN=2:1:size(fList,1)
+% for fN=4:1:4
     a = fZones{fN,1};
     b = fZones{fN,2};
     a=a
@@ -86,7 +99,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=1;
+    triesNumber=100;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -203,7 +216,7 @@ T(:,2) = (a(2):(b(2)-a(2))/(Nb-1):b(2))';
 
 Err=[];
 Time=[];
-for fN=1:1:size(fList,1)
+for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
