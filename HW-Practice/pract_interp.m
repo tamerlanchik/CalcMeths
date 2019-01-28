@@ -2,7 +2,7 @@ clc;
 clear variables;
 close all force;
 
-Na = 10;
+Na = 20;
 Nb = 5*Na;
 a = [-1,-1];    %left bottom point
 b = [1,1];      %right top point
@@ -43,7 +43,7 @@ fZones{3,2} = [5;5];
 %Not smooth
 fList{4} = @(x,y) abs(x.^2 + sin(0.5*pi*y) - y);
 fNames{4} = 'Not smooth';
-fZones{4,1} = [-1;-1];
+fZones{4,1} = [0;0];
 fZones{4,2} = [1;1];
 %Sibson
 fList{5} = @(x,y) cos(4*pi*((x-0.25).^2 + (y-0.25).^2).^(1/2));
