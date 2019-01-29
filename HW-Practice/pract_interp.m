@@ -2,7 +2,7 @@ clc;
 clear variables;
 close all force;
 
-Na = 20;
+Na = 30;
 Nb = 5*Na;
 a = [-1,-1];    %left bottom point
 b = [1,1];      %right top point
@@ -51,7 +51,7 @@ fNames{5} = 'Sibson';
 fZones{5,1} = [0;0];
 fZones{5,2} = [1;1];
 
-fList{6}=@(x,y) ((100*x).^2 + (100*y).^2 + 10);
+fList{6}=@(x,y) ((x).^2 + (y).^2 + 10);
 fNames{6}='Paraboloid';
 fZones{6,1} = [-50;-50];
 fZones{6,2} = [50;50];
@@ -85,7 +85,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=1;
+    triesNumber=5;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -165,6 +165,7 @@ ylabel('Relative error per point');
 grid on;
 grid minor;
 legend(methNames);
+title('Calculation error')
 % ylim([0,3]);
 
 subplot(1,2,2);
@@ -175,15 +176,17 @@ ylabel("Work time, s");
 grid on;
 grid minor;
 legend(methNames);
+title('Calculation time')
 
 figure(30);
 bar(Err(:,end)');
 % ylim([0,0.0003]);
 xticklabels(methNames);
 ylabel('Relative error per point');
+title('Calculation error for paraboloid (Na=30, Nb=150)')
 
-Na = 5;
-Nb = 30*Na;
+Na = 30;
+Nb = 20*Na;
 
 %interpolated grid
 T0 = zeros(Na, 2);
@@ -206,7 +209,7 @@ for fN=2:1:size(fList,1)
     F0 = fList{fN}(X,Y);    %true F value
     timeAverage = zeros(1,3);
     F=zeros(size(F0,1),size(F0,2),3);
-    triesNumber=1;
+    triesNumber=5;
     for j=1:1:triesNumber
         for m = 1:1:3
             tic;
@@ -226,7 +229,7 @@ end
 % Err(1,:)=[];
 % Time(:,1)=[];
 QQQ=log10(Err+1)
-figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=5, Nb=150');
+figure('NumberTitle', 'off', 'Name', 'Conclusion: Na=30, Nb=600');
 subplot(1,2,1);
 bar(Err');
 xticklabels(fNames(2:end));
@@ -235,7 +238,8 @@ ylabel('Relative error per point');
 grid on;
 grid minor;
 legend(methNames);
-ylim([0,20]);
+title('Calculation error')
+% ylim([0,20]);
 
 subplot(1,2,2);
 bar(Time);
@@ -245,9 +249,11 @@ ylabel("Work time, s");
 grid on;
 grid minor;
 legend(methNames);
+title('Calculation time')
 
 figure(40);
 bar(Err(:,end)');
 % ylim([0,0.0003]);
 xticklabels(methNames);
 ylabel('Relative error per point');
+title('Calculation error for paraboloid (Na=30, Nb=600)')
